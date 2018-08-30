@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset='utf-8' />
+    <title>私人遊樂場地契約用地地圖</title>
+    <meta name="author" content="香港01">
+    <meta name="description" content="車主福音！一圖睇清全港各區泊車位！香港開放數據落後，我地為你搜集咗全港停車場位置，除咗室內停車場，仲有露天停車場同咪錶位！">
+    <meta name="publisher" content="HK01">
+
+    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.3/dist/leaflet.css" integrity="sha512-Rksm5RenBEKSKFjgI3a41vrjkw4EVPlJ3+OiI65vTjIdo9brlAacEuKOiQ5OFh7cOI1bkDwLqdLw3Zg0cRJAAQ=="
+        crossorigin="" />
+    <!-- Make sure you put this AFTER Leaflet's CSS -->
+    <script src="https://unpkg.com/leaflet@1.3.3/dist/leaflet.js" integrity="sha512-tAGcCfR4Sc5ZP5ZoVz0quoZDYX5aCtEm/eu1KhSLj2c9eFrylXZknQYmxUssFaVJKvvc0dJQixhGjG2yXWiV9Q=="
+        crossorigin=""></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+        crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ"
+        crossorigin="anonymous">
+    <link rel="stylesheet" href="src/custom.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="src/playgrounds.js"></script>
+</head>
+
+<body>
+    <div id='mapid'></div>
+    <div class="card card--custom card-hidden">
+        <div class="card-header">
+            <!-- <span id="branchStatus"></span> -->
+            <span class="card-title" id="cardName"></span>
+        </div>
+        <div class="card-body">
+            <button type="button" class="close" id="close-card" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            <div class="container">
+                <ul class="fa-ul" id="cardDetail"></ul>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        var pgmap;
+
+        function detectSource(callback) {
+            let linkText = window.location.href;
+            var entrySource = (linkText.match(/#/)) ? linkText.match(/#(.*)/)[1] : "";
+            var entryPoint = "";
+
+            switch (entrySource) {
+                case "article":
+                    var prevent_double_count = 1;
+                    entryPoint = "other_article";
+                    // m6map.once('movestart', function () {
+                    //     fireArticlePV(removehash(window.location.href));
+                    // })
+                    break;
+                case "self":
+                    entryPoint = "base_article";
+                    break;
+                case "issue":
+                    entryPoint = "issue";
+                    // fireArticlePV(removehash(window.location.href));
+                    break;
+                case "freeze":
+                    entryPoint = "freeze";
+                    break
+                default:
+                    // window.location.href = "https://www.hk01.com";
+                    entryPoint = "organic";
+                // fireArticlePV(removehash(window.location.href));
+            }
+            callback(entryPoint);
+        }
+
+
+        detectSource(initMap);
+
+        function initMap(entryPoint) {
+
+            console.log(entryPoint);
+
+            var map_options = {
+                center: (screen.width >= 768) ? [22.316538, 114.174007] : [22.316538, 114.174007],
+                zoom: 11, //(screen.width >= 768) ? 11 : 11,
+                zoomSnap: 1,
+                maxBounds: ([
+                    [21.795661, 113.073929],
+                    [23.113786, 115.230749]
+                ]),
+                keyboard: false // Prevent jumping in iframe
+            }
+            
+            pgmap = L.map('mapid', map_options);
+            
+            L.tileLayer('https://maptile.hk01.com/tile/{z}/{x}/{y}.png', {
+                maxZoom: 18,
+                minZoom: 10,
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(pgmap);
+
+            green_lay = L.geoJSON(playgrounds, {
+                onEachFeature: onEachFeature,
+                // pointToLayer: function (feature, latlng) {
+                //     return L.circle(latlng, green_micbill_paid_style);
+                // },
+            }).addTo(pgmap);
+
+            var overlayMaps = {
+                "用地": green_lay
+            };
+            L.control.layers({}, overlayMaps, {
+                collapsed: false,
+                position: 'topright'
+            }).addTo(pgmap);
+        }
+
+
+        var card = document.querySelector('.card--custom');
+        var closeCard = document.querySelector('#close-card');
+        closeCard.addEventListener('click', () => {
+            card.classList.add("card-hidden");
+        });
+
+        function onEachFeature(feature, layer) {
+            layer.on({
+                click: createPopup
+            })
+        }
+
+        function createPopup(e) {
+            //offset the centre
+            // bounds = pgmap.getBounds();
+            // lat_bounds = bounds._northEast.lat - bounds._southWest.lat;
+            // var centre = e.target.feature.geometry.coordinates //.reverse();
+            // pgmap.panTo([centre[1] - lat_bounds * 0.2, centre[0]]);
+
+            var prop = e.target.feature.properties;
+            console.log(prop);
+
+            document.getElementById("cardName").textContent = prop["chi_name"];
+
+            document.getElementById("cardDetail").innerHTML = 
+            `
+                    <li><span class="fa-li"><i class="fas fa-map-marker-alt fa-fw"></i></span>面積：${prop["area"]}呎</li>
+                    <li><span class="fa-li"><i class="fas fa-map-marker-alt fa-fw"></i></span>會員：${prop["members"]}人</li>
+                    <li><span class="fa-li"><i class="fas fa-map-marker-alt fa-fw"></i></span>體育設施平均使用率：${prop["avg_usage"]}</li>
+                    <li><span class="fa-li"><i class="fas fa-map-marker-alt fa-fw"></i></span>最新年度的商業收入佔比：${prop["comm_revenue"]}</li>
+                    <li><span class="fa-li"><i class="fas fa-map-marker-alt fa-fw"></i></span>契約到期：${prop["remarks"]}</li>
+
+            
+            `
+            card.classList.remove("card-hidden");
+
+            // Change URL onClick
+            var stateObj = { playground_id: prop["id"]};
+            window.history.pushState(stateObj, "", `#${stateObj.playground_id}`);
+        }
+
+
+
+    </script>
+
+</body>
+
+</html>
