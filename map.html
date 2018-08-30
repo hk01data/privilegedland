@@ -83,7 +83,7 @@
             console.log(entryPoint);
 
             var map_options = {
-                center: (screen.width >= 768) ? [22.316538, 114.174007] : [22.316538, 114.174007],
+                center: (screen.width >= 768) ? [22.372809, 114.120322] : [22.372809, 114.1660907],
                 zoom: 11, //(screen.width >= 768) ? 11 : 11,
                 zoomSnap: 1,
                 maxBounds: ([
@@ -131,6 +131,8 @@
         }
 
         function createPopup(e) {
+            console.log(e);
+            pgmap.fitBounds(e.target.getBounds());
             //offset the centre
             // bounds = pgmap.getBounds();
             // lat_bounds = bounds._northEast.lat - bounds._southWest.lat;
@@ -148,9 +150,7 @@
                     <li><span class="fa-li"><i class="fas fa-map-marker-alt fa-fw"></i></span>會員：${prop["members"]}人</li>
                     <li><span class="fa-li"><i class="fas fa-map-marker-alt fa-fw"></i></span>體育設施平均使用率：${prop["avg_usage"]}</li>
                     <li><span class="fa-li"><i class="fas fa-map-marker-alt fa-fw"></i></span>最新年度的商業收入佔比：${prop["comm_revenue"]}</li>
-                    <li><span class="fa-li"><i class="fas fa-map-marker-alt fa-fw"></i></span>契約到期：${prop["remarks"]}</li>
-
-            
+                    <li><span class="fa-li"><i class="fas fa-map-marker-alt fa-fw"></i></span>契約到期：${prop["remarks"]}</li>             
             `
             card.classList.remove("card-hidden");
 
