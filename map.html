@@ -9,23 +9,49 @@
     <meta name="publisher" content="HK01">
 
     <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.3/dist/leaflet.css" integrity="sha512-Rksm5RenBEKSKFjgI3a41vrjkw4EVPlJ3+OiI65vTjIdo9brlAacEuKOiQ5OFh7cOI1bkDwLqdLw3Zg0cRJAAQ=="
         crossorigin="" />
     <!-- Make sure you put this AFTER Leaflet's CSS -->
     <script src="https://unpkg.com/leaflet@1.3.3/dist/leaflet.js" integrity="sha512-tAGcCfR4Sc5ZP5ZoVz0quoZDYX5aCtEm/eu1KhSLj2c9eFrylXZknQYmxUssFaVJKvvc0dJQixhGjG2yXWiV9Q=="
         crossorigin=""></script>
+
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
         crossorigin="anonymous">
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ"
+
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU"
         crossorigin="anonymous">
+
+
     <link rel="stylesheet" href="src/custom.css">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <script src="src/playgrounds.js"></script>
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/flickity@2/dist/flickity.min.css">
+    <!-- JavaScript -->
+    <script src="https://unpkg.com/flickity@2/dist/flickity.pkgd.min.js"></script>
 </head>
 
 <body>
+
+
+<!-- As a heading -->
+<!-- <nav class="navbar navbar-dark bg-dark">
+    <span class="navbar-brand mb-0 h1">Navbar</span>
+    <ul class="nav justify-content-end">
+        <li class="nav-item" id="prevBtn">
+            <a class="nav-link" href="">Prev</a>
+        </li>
+        <li class="nav-item" id="nextBtn">
+            <a class="nav-link" href="">Next</a>
+        </li>
+    </ul>
+  </nav> -->
+
+
+
     <div id='mapid'></div>
-    <div class="card card--custom card-hidden">
+    <div class="card card--custom card--hidden">
         <div class="card-header">
             <!-- <span id="branchStatus"></span> -->
             <span class="card-title" id="cardName"></span>
@@ -34,7 +60,27 @@
             <button type="button" class="close" id="close-card" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
             </button>
+            <ul class="nav justify-content-end">
+                <li class="nav-item" id="prevBtn">
+                    <a class="nav-link" href="">Prev</a>
+                </li>
+                <li class="nav-item" id="nextBtn">
+                    <a class="nav-link" href="">Next</a>
+                </li>
+            </ul>
             <div class="container">
+                <div class="carousel">
+                    <img data-flickity-lazyload="https://s3-us-west-2.amazonaws.com/s.cdpn.io/82/orange-tree.jpg" alt="總教練沈金康（中）喜與李慧詩慶祝。（李澤彤攝）"
+                    />
+                    <img data-flickity-lazyload="https://s3-us-west-2.amazonaws.com/s.cdpn.io/82/submerged.jpg" alt="救護站的菜大概較這豐富，「三餸一湯，但15分鐘內一定會吃完，你只可以吃這麼久。」（資料圖片/江智騫攝）"
+                    />
+                    <img data-flickity-lazyload="https://s3-us-west-2.amazonaws.com/s.cdpn.io/82/look-out.jpg" alt="look-out" />
+                    <img data-flickity-lazyload="https://s3-us-west-2.amazonaws.com/s.cdpn.io/82/one-world-trade.jpg" alt="One World Trade" />
+                    <img data-flickity-lazyload="https://s3-us-west-2.amazonaws.com/s.cdpn.io/82/drizzle.jpg" alt="drizzle" />
+                    <img data-flickity-lazyload="https://s3-us-west-2.amazonaws.com/s.cdpn.io/82/cat-nose.jpg" alt="cat nose" />
+                </div>
+
+                <p class="caption">&nbsp;</p>
                 <ul class="fa-ul" id="cardDetail"></ul>
             </div>
         </div>
@@ -43,11 +89,16 @@
 
     <script>
         var pgmap;
+        var entrySource;
+        var currentID;
 
         function detectSource(callback) {
             let linkText = window.location.href;
-            var entrySource = (linkText.match(/#/)) ? linkText.match(/#(.*)/)[1] : "";
+            entrySource = (linkText.match(/#/)) ? linkText.match(/#(.*?)(&|$)/)[1] : "organic";
+            console.log(entrySource);
+            currentID = (linkText.match(/&id=/)) ? linkText.match(/&id=(\d+)/)[1] : 0;
             var entryPoint = "";
+
 
             switch (entrySource) {
                 case "article":
@@ -72,29 +123,31 @@
                     entryPoint = "organic";
                 // fireArticlePV(removehash(window.location.href));
             }
-            callback(entryPoint);
+            callback(entryPoint, currentID);
         }
 
 
         detectSource(initMap);
 
-        function initMap(entryPoint) {
+        function initMap(entryPoint, currentID) {
 
-            console.log(entryPoint);
+            console.log(entryPoint + " | " + currentID);
 
             var map_options = {
                 center: (screen.width >= 768) ? [22.372809, 114.120322] : [22.372809, 114.1660907],
                 zoom: 11, //(screen.width >= 768) ? 11 : 11,
-                zoomSnap: 1,
+                zoomSnap: 0,
+                zoomDelta: 1,
+                wheelPxPerZoomLevel: 20,
                 maxBounds: ([
                     [21.795661, 113.073929],
                     [23.113786, 115.230749]
                 ]),
                 keyboard: false // Prevent jumping in iframe
             }
-            
+
             pgmap = L.map('mapid', map_options);
-            
+
             L.tileLayer('https://maptile.hk01.com/tile/{z}/{x}/{y}.png', {
                 maxZoom: 18,
                 minZoom: 10,
@@ -102,7 +155,7 @@
             }).addTo(pgmap);
 
             green_lay = L.geoJSON(playgrounds, {
-                onEachFeature: onEachFeature,
+                onEachFeature: popByClick,
                 // pointToLayer: function (feature, latlng) {
                 //     return L.circle(latlng, green_micbill_paid_style);
                 // },
@@ -119,46 +172,214 @@
 
 
         var card = document.querySelector('.card--custom');
-        var closeCard = document.querySelector('#close-card');
-        closeCard.addEventListener('click', () => {
-            card.classList.add("card-hidden");
+        var card_header = document.querySelector('.card-header');
+        card_header.addEventListener('click', () => {
+            card.classList.toggle('card--expanded');
         });
 
-        function onEachFeature(feature, layer) {
-            layer.on({
-                click: createPopup
+        var closeCard = document.querySelector('#close-card');
+        closeCard.addEventListener('click', () => {
+            card.classList.add("card--hidden");
+            if (card.classList.contains('card--expanded')) card.classList.toggle('card--expanded');
+        });
+
+        var nextBtn = document.getElementById('nextBtn');
+        nextBtn.addEventListener('click', function (event) {
+            event.preventDefault();
+            if (currentID < 27) popByID(currentID + 1);
+            else popByID(1);
+        })
+
+        var prevBtn = document.getElementById('prevBtn');
+        prevBtn.addEventListener('click', function (event) {
+            event.preventDefault();
+            if (currentID > 0) popByID(currentID - 1);
+            else popByID(1);
+        })
+
+        
+        function popByClick(feature, layer) {
+            layer.on('click', function (e) {
+                changeState(e);
+                createPopup(e);
+                zoomToPolygon(e);
             })
         }
 
-        function createPopup(e) {
-            console.log(e);
-            pgmap.fitBounds(e.target.getBounds());
-            //offset the centre
-            // bounds = pgmap.getBounds();
-            // lat_bounds = bounds._northEast.lat - bounds._southWest.lat;
-            // var centre = e.target.feature.geometry.coordinates //.reverse();
-            // pgmap.panTo([centre[1] - lat_bounds * 0.2, centre[0]]);
+        function popByID(id) {
+            playgrounds.find(function (element) {
+                if (parseInt(element.properties.id) == id) {
+                    changeState(id);
+                    createPopup(element);
+                    zoomToPolygon(L.geoJson(element));
+                }
+            });
+        }
 
-            var prop = e.target.feature.properties;
-            console.log(prop);
+        function changeState(e) {
+            if (e.type) currentID = parseInt(e.target.feature.properties.id)
+            else currentID = e;
+
+            // Change URL onClick
+            var stateObj = { playground_id: currentID };
+            window.history.pushState(stateObj, "", `#${entrySource}&id=${currentID}`);
+        }
+
+        function zoomToPolygon(e) {
+            if (e.target) bbox = e.target.getBounds();
+            else bbox = e.getBounds();
+
+            console.log(bbox.toBBoxString());
+            tuned_bbox = bbox;
+            switch (parseInt(currentID)) {
+                case 2:
+                    tuned_bbox = L.latLngBounds([22.278790, 114.190460], [22.280482, 114.192329]);
+                    break;
+                case 10:
+                    tuned_bbox = L.latLngBounds([22.273413, 114.180323], [22.275704, 114.183000]);
+                    break;
+                case 17:
+                    tuned_bbox = L.latLngBounds([22.267781, 114.190859], [22.269909, 114.193376]);
+                    break;
+            }
+
+            console.log("map size: " + pgmap.getSize());
+
+            tuned_bbox.extend([bbox.getSouth() - (bbox.getNorth() - bbox.getSouth()) * 2.5, bbox.getEast()]);
+            // console.log(tuned_bbox.toBBoxString());
+
+            pgmap.fitBounds(tuned_bbox, { padding: [50, 50] });
+            // console.log("New bound: "+ pgmap.getBounds().toBBoxString());
+            // pgmap.fitBounds(bbox);
+            // console.log("New bound: "+ pgmap.getBounds().toBBoxString());
+
+        }
+
+
+
+
+        function createPopup(e) {
+            var prop;
+            console.log(e);
+            if (e.type != "Feature") prop = e.target.feature.properties;
+            else prop = e.properties;
 
             document.getElementById("cardName").textContent = prop["chi_name"];
 
-            document.getElementById("cardDetail").innerHTML = 
-            `
+            document.getElementById("cardDetail").innerHTML =
+                `
                     <li><span class="fa-li"><i class="fas fa-map-marker-alt fa-fw"></i></span>面積：${prop["area"]}呎</li>
                     <li><span class="fa-li"><i class="fas fa-map-marker-alt fa-fw"></i></span>會員：${prop["members"]}人</li>
                     <li><span class="fa-li"><i class="fas fa-map-marker-alt fa-fw"></i></span>體育設施平均使用率：${prop["avg_usage"]}</li>
                     <li><span class="fa-li"><i class="fas fa-map-marker-alt fa-fw"></i></span>最新年度的商業收入佔比：${prop["comm_revenue"]}</li>
-                    <li><span class="fa-li"><i class="fas fa-map-marker-alt fa-fw"></i></span>契約到期：${prop["remarks"]}</li>             
-            `
-            card.classList.remove("card-hidden");
+                    <li><span class="fa-li"><i class="fas fa-map-marker-alt fa-fw"></i></span>契約到期：${prop["remarks"]}</li>
 
-            // Change URL onClick
-            var stateObj = { playground_id: prop["id"]};
-            window.history.pushState(stateObj, "", `#${stateObj.playground_id}`);
+                    <p>廣深港高鐵香港段將於下月23日通車，再爆山「豆腐渣」醜聞。公民黨立法會議員譚文豪今日（31日）表示，收到消息指八鄉到石崗路段，在前日（29日）紅色暴雨警告生效時，有負責轉換路軌的路軌轉轍器，因路軌水浸而被浸壞。他指這情況下控制室將無法控制列車改道，駛向錯誤方向，要求港鐵就事件向公眾交待。</p><p>廣深港高鐵香港段將於下月23日通車，再爆山「豆腐渣」醜聞。公民黨立法會議員譚文豪今日（31日）表示，收到消息指八鄉到石崗路段，在前日（29日）紅色暴雨警告生效時，有負責轉換路軌的路軌轉轍器，因路軌水浸而被浸壞。他指這情況下控制室將無法控制列車改道，駛向錯誤方向，要求港鐵就事件向公眾交待。</p><p>廣深港高鐵香港段將於下月23日通車，再爆山「豆腐渣」醜聞。公民黨立法會議員譚文豪今日（31日）表示，收到消息指八鄉到石崗路段，在前日（29日）紅色暴雨警告生效時，有負責轉換路軌的路軌轉轍器，因路軌水浸而被浸壞。他指這情況下控制室將無法控制列車改道，駛向錯誤方向，要求港鐵就事件向公眾交待。</p><p>廣深港高鐵香港段將於下月23日通車，再爆山「豆腐渣」醜聞。公民黨立法會議員譚文豪今日（31日）表示，收到消息指八鄉到石崗路段，在前日（29日）紅色暴雨警告生效時，有負責轉換路軌的路軌轉轍器，因路軌水浸而被浸壞。他指這情況下控制室將無法控制列車改道，駛向錯誤方向，要求港鐵就事件向公眾交待。</p>             
+            `
+            card.classList.remove("card--hidden");
         }
 
+        // external js: flickity.pkgd.js
+
+        var flkty = new Flickity('.carousel', {
+            imagesLoaded: true,
+            percentPosition: false,
+            wrapAround: true,
+            lazyLoad: true,
+            pageDots: false
+        });
+
+        var caption = document.querySelector('.caption');
+
+        flkty.on('select', function () {
+            // set image caption using img's alt
+            caption.textContent = flkty.selectedElement.alt;
+        });
+
+
+        
+
+        function onMapClick(e) {
+            pgmap.fitBounds([[22.271194, 114.178092], [22.286079, 114.192911]], { padding: [0, 0] });
+        }
+
+
+        pgmap.on('zoomend', function () {
+            console.log(pgmap.getZoom());
+        })
+
+
+var serachMarkers = {
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "bound": [[22.271194, 114.178092], [22.286079, 114.192911]],
+        "icon": "searchMkr1",
+        "marker-size": "medium",
+        "marker-symbol": ""
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+            114.180181,
+          22.262056
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "bound": [[22.302329, 114.172774], [22.310514, 114.179198]],
+        "icon": "searchMkr1",
+        "marker-size": "medium",
+        "marker-symbol": ""
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+        114.175392,
+            22.312573,
+        ]
+      }
+    }
+  ]
+}
+
+var searchMkr1 = L.icon({
+    iconUrl: 'images/searchMarker.png',
+    iconSize: [48, 48],
+    iconAnchor: [24, 24]
+});
+
+
+var searchMkr_layer = new L.FeatureGroup();
+
+L.geoJSON(serachMarkers, {
+    pointToLayer: function (geoJsonPoint, latlng) {
+        console.log(geoJsonPoint.properties.icon)
+        return L.marker(latlng, { icon: searchMkr1 })   
+    },
+    onEachFeature: searchZoom
+}).addTo(searchMkr_layer);
+
+pgmap.addLayer(searchMkr_layer);
+
+        function searchZoom(feature, layer) {
+            layer.on('click', function (e) {
+                pgmap.fitBounds(feature.properties.bound, { padding: [0, 0] });
+            })
+        }
+
+        pgmap.on('zoomend', function () {
+            if (pgmap.getZoom() < 13) {
+                pgmap.addLayer(searchMkr_layer);
+            }
+            else {
+                pgmap.removeLayer(searchMkr_layer);
+            }
+    });
 
 
     </script>
