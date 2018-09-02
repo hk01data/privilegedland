@@ -6,6 +6,8 @@ body {
     font-family: 'Noto Sans TC', sans-serif;
 }
 
+* { box-sizing: border-box; }
+
 .leaflet-control-layers {
     font-family: 'Noto Sans TC', sans-serif;
     font-size: 1rem;
@@ -20,42 +22,67 @@ body {
     height: 100vh;
 }
 
-.card-header {
-    background-color: #f6f6f6;
-    padding: 1rem 2rem 0rem !important;
-    border: none;
-}
 
 .card--custom {
+    top: 40%;
+    height: 100%;
     left: 0;
     right: 0;
     position: fixed;
-    background-color: #f6f6f6;
+    /* background-color: #f6f6f6; */
     z-index: 5010;
     visibility: visible;
     opacity: 1;
-    transition: opacity 0.33s linear;
+    /* transition: opacity 0.33s linear; */
     border-top-left-radius: 8px !important;
     border-top-right-radius: 8px !important;
     border: none;
     line-height: 1.8rem;
+
+    -webkit-transition: all .2s ease-in-out,top .2s ease-out; 
+    transition: all .2s ease-in-out,top .2s ease-out;
 }
+
+
+.card--expanded:not(.card--hidden) {
+    top: 0%;
+}
+
+.card--hidden {
+    top: 100%;
+    -webkit-transition: all .2s ease-in-out,top .2s ease-out; 
+    transition: all .2s ease-in-out,top .2s ease-out;
+}
+
+
+.card-header {
+    /* background-color: #f6f6f6; */
+    /* padding: 1rem 2rem 0rem !important; */
+    padding: 0 !important;
+    /* border: none; */
+}
+
+
 
 .card-body {
     overflow-y: auto;
-    max-height: calc(100vh - 220px);
+    /* max-height: calc(100vh - 220px); */
     background: url(../images/hk01watermark.png);
     background-repeat: no-repeat;
     background-position: center;
-    padding: 0 1.25rem 1rem !important;
+    /* padding: 0 1.25rem 1rem !important; */
+    padding: 0 !important;
 }
 
+.card .container {
+    padding: 0 !important;
+}
 .card-footer {
     border: none !important;
-    padding: .75rem 1.25rem !important;
+    /* padding: .75rem 1.25rem !important; */
 }
 
-@media only screen and (max-width: 835px) {
+/* @media only screen and (max-width: 835px) {
     .card--custom {
         width: 100%;
         bottom: 0;
@@ -74,7 +101,7 @@ body {
         border-bottom-left-radius: 8px !important;
         border-bottom-right-radius: 8px !important;
     }
-}
+} */
 
 .close {
     position: absolute;
@@ -90,11 +117,7 @@ body {
     cursor: pointer;
 }
 
-.card-hidden {
-    opacity: 0;
-    visibility: hidden;
-    transition: visibility 0s 0.33s, opacity 0.33s linear;
-}
+
 
 .card #branchStatus {
     padding: 1px 10px;
@@ -133,13 +156,27 @@ body {
     margin-bottom: 0;
 }
 
-#opening_hours {
-    list-style-type: none;
-    margin: 0;
-    padding: 0 2rem;
+
+
+
+.carousel {
+    width: 100%; /* full width */
+    height: 200px;
+    margin-right: 10px;
+    background: #333;
 }
 
-#issueReport {
-    display: block;
-    margin-top: 0.75rem;
+.carousel img {
+  display: block;
+  height: 200px;
 }
+
+.caption {
+  background: #FAFAFA;
+  font-size: 0.9rem;
+  line-height: 1rem;
+}
+
+.flickity-page-dots {
+    bottom: -50px !important;
+  }
