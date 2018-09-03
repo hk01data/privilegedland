@@ -25,62 +25,43 @@
 
     <link rel="stylesheet" href="src/custom.css">
     <script src="src/playgrounds.js"></script>
-
-    <!-- CSS -->
-    <link rel="stylesheet" href="https://unpkg.com/flickity@2/dist/flickity.min.css">
-    <!-- JavaScript -->
-    <script src="https://unpkg.com/flickity@2/dist/flickity.pkgd.min.js"></script>
+    <script src="src/pgContents.js"></script>
+    <script src="src/siema.min.js"></script>
 </head>
 
 <body>
-
-
-    <!-- As a heading -->
-    <!-- <nav class="navbar navbar-dark bg-dark">
-    <span class="navbar-brand mb-0 h1">Navbar</span>
-    <ul class="nav justify-content-end">
-        <li class="nav-item" id="prevBtn">
-            <a class="nav-link" href="">Prev</a>
-        </li>
-        <li class="nav-item" id="nextBtn">
-            <a class="nav-link" href="">Next</a>
-        </li>
-    </ul>
-  </nav> -->
-
-
 
     <div id='mapid'></div>
     <div class="card card--custom card--hidden">
         <div class="card-header">
             <span id="cardType"></span>
             <button type="button" class="close" id="close-card" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-                <button type="button" class="close" id="nextBtn" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">＞</span>
-                    </button>
-                <button type="button" class="close" id="prevBtn" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">＜</span>
-                    </button>            
+                <span aria-hidden="true">&times;</span>
+            </button>
+            <button type="button" class="close" id="nextBtn" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">＞</span>
+            </button>
+            <button type="button" class="close" id="prevBtn" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">＜</span>
+            </button>
         </div>
         <div class="card-body">
-
-
             <span class="card-title" id="cardName"></span>
-            
-                <div class="carousel">
-                    <img data-flickity-lazyload="images/playgrounds/1-1.jpg" alt="總教練沈金康（中）喜與李慧詩慶祝。（李澤彤攝）"
-                    />
-                    <img data-flickity-lazyload="https://s3-us-west-2.amazonaws.com/s.cdpn.io/82/submerged.jpg" alt="救護站的菜大概較這豐富，「三餸一湯，但15分鐘內一定會吃完，你只可以吃這麼久。」（資料圖片/江智騫攝）"
-                    />
-                    <img data-flickity-lazyload="https://s3-us-west-2.amazonaws.com/s.cdpn.io/82/look-out.jpg" alt="look-out" />
-                    <img data-flickity-lazyload="https://s3-us-west-2.amazonaws.com/s.cdpn.io/82/one-world-trade.jpg" alt="One World Trade" />
-                    <img data-flickity-lazyload="https://s3-us-west-2.amazonaws.com/s.cdpn.io/82/drizzle.jpg" alt="drizzle" />
-                    <img data-flickity-lazyload="https://s3-us-west-2.amazonaws.com/s.cdpn.io/82/cat-nose.jpg" alt="cat nose" />
+
+            <div id="siema_container">
+                <div class="siema_control">
+                    <button id="prev">prev</button>
+                    <button id="next">next</button>
                 </div>
-                <div class="container">
-                <p class="caption">&nbsp;</p>
+                <div class="siema">
+                    <img>
+                    <img>
+                    <img>
+                </div>
+                <p class="caption"></p>&nbsp;<span class="credit"></span>
+            </div>
+            
+            <div class="container">
                 <ul class="fa-ul" id="cardDetail"></ul>
                 <p class="remarks"></p>
             </div>
@@ -92,11 +73,38 @@
         var pgmap;
         var entrySource;
         var currentID;
+        const mySiema = new Siema({
+                selector: '.siema',
+                duration: 200,
+                easing: 'ease-out',
+                perPage: 1,
+                startIndex: 0,
+                draggable: true,
+                multipleDrag: true,
+                threshold: 20,
+                loop: true,
+                rtl: false,
+                onInit: printSlideIndex,
+                onChange: printSlideIndex,
+            });
+
+        var shape_blue = {
+            'color': '#0017c7',
+            'weight': 2,
+            'fillColor': '#0017c7',
+            'fillOpacity': 0.5
+        };
+
+        var shape_red = {
+            'color': '#F21326',
+            'weight': 2,
+            'fillColor': '#F21326',
+            'fillOpacity': 0.5
+        };
 
         function detectSource(callback) {
             let linkText = window.location.href;
             entrySource = (linkText.match(/#/)) ? linkText.match(/#(.*?)(&|$)/)[1] : "organic";
-            console.log(entrySource);
             currentID = (linkText.match(/&id=/)) ? linkText.match(/&id=(\d+)/)[1] : 0;
             var entryPoint = "";
 
@@ -155,34 +163,36 @@
                 attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             }).addTo(pgmap);
 
-            green_lay = L.geoJSON(playgrounds, {
+            playground_layer = L.geoJSON(playgrounds, {
                 onEachFeature: popByClick,
-                // pointToLayer: function (feature, latlng) {
-                //     return L.circle(latlng, green_micbill_paid_style);
-                // },
+                style: shape_blue,
             }).addTo(pgmap);
 
             var overlayMaps = {
-                "用地": green_lay
+                "用地": playground_layer
             };
-            L.control.layers({}, overlayMaps, {
-                collapsed: false,
-                position: 'topright'
-            }).addTo(pgmap);
+
+            //     L.control.layers({}, overlayMaps, {
+            //         collapsed: false,
+            //         position: 'topright'
+            //     }).addTo(pgmap);
         }
+
 
 
         var card = document.querySelector('.card--custom');
         var card_header = document.querySelector('.card-header');
-        card_header.addEventListener('click', (event) => {
+
+        card.addEventListener('click', (event) => {
             card.classList.toggle('card--expanded');
             event.stopPropagation();
         });
 
         var closeCard = document.querySelector('#close-card');
-        closeCard.addEventListener('click', () => {
+        closeCard.addEventListener('click', (event) => {
             card.classList.add("card--hidden");
             card.classList.remove('card--expanded');
+            event.stopPropagation();
         });
 
         var nextBtn = document.getElementById('nextBtn');
@@ -198,11 +208,12 @@
             event.preventDefault();
             if (currentID > 1) popByID(currentID - 1);
             else popByID(32);
-            event.stopPropagation()
+            event.stopPropagation();
         })
 
 
         function popByClick(feature, layer) {
+            feature.properties.bounds_calculated = layer.getBounds();
             layer.on('click', function (e) {
                 changeState(e);
                 createPopup(e);
@@ -221,8 +232,14 @@
         }
 
         function changeState(e) {
-            if (e.type) currentID = parseInt(e.target.feature.properties.id)
-            else currentID = e;
+            if (e.type) {
+                // e.target.setStyle(shape_red);
+                currentID = parseInt(e.target.feature.properties.id);
+            }
+            else {
+                //e.target.setStyle(shape_red);
+                currentID = e;
+            }
 
             // Change URL onClick
             var stateObj = { playground_id: currentID };
@@ -232,8 +249,10 @@
         function zoomToPolygon(e) {
             if (e.target) bbox = e.target.getBounds();
             else bbox = e.getBounds();
-
-            console.log(bbox.toBBoxString());
+            // console.log(e);
+            // console.log(e.target.feature.properties.bounds_calculated);
+            // console.log(bbox.toBBoxString());
+            // console.log(bbox.getSouth());
             tuned_bbox = bbox;
             switch (parseInt(currentID)) {
                 case 2:
@@ -246,16 +265,13 @@
                     tuned_bbox = L.latLngBounds([22.267781, 114.190859], [22.269909, 114.193376]);
                     break;
             }
-
-            console.log("map size: " + pgmap.getSize());
-
-            tuned_bbox.extend([bbox.getSouth() - (bbox.getNorth() - bbox.getSouth()) * 2.5, bbox.getEast()]);
-            // console.log(tuned_bbox.toBBoxString());
-
+            // console.log(tuned_bbox)
+            tuned_bbox._southWest.lat = bbox.getSouth() - (bbox.getNorth() - bbox.getSouth()) * 2.5;
+            //tuned_bbox.extend([bbox.getSouth() - (bbox.getNorth() - bbox.getSouth()) * 2.5, bbox.getEast()]);
+            console.log('extned');
+            console.log(tuned_bbox.getSouth());
+            console.log(bbox.getSouth());
             pgmap.fitBounds(tuned_bbox, { padding: [50, 50] });
-            // console.log("New bound: "+ pgmap.getBounds().toBBoxString());
-            // pgmap.fitBounds(bbox);
-            // console.log("New bound: "+ pgmap.getBounds().toBBoxString());
 
         }
 
@@ -267,9 +283,9 @@
 
             if (e.type != "Feature") prop = e.target.feature.properties;
             else prop = e.properties;
-            
+
             document.getElementById("cardType").textContent = prop["type"];
-            document.getElementById("cardType").className = (prop["type"] == "港島")? "blue": (prop["type"] == "九龍")? "red" : "green";
+            document.getElementById("cardType").className = (prop["type"] == "港島") ? "blue" : (prop["type"] == "九龍") ? "red" : "green";
 
             document.getElementById("cardName").innerHTML = prop["chi_name"];
             var content = `
@@ -288,26 +304,63 @@
             document.querySelector(".remarks").innerHTML = prop["remarks"];
 
             card.classList.remove("card--hidden");
+
+            console.log(prop["id"]);
+            initSiema();
         }
 
-        // external js: flickity.pkgd.js
+        function initSiema() {
+            var siemaDiv = document.querySelector(".siema");
+            // while (siemaDiv.childNodes) {
+                mySiema.remove(0);
 
-        var flkty = new Flickity('.carousel', {
-            // imagesLoaded: true,
-            percentPosition: false,
-            wrapAround: true,
-            pageDots: false
-        });
-
-        var caption = document.querySelector('.caption');
-
-        flkty.on('select', function () {
-            // set image caption using img's alt
-            caption.textContent = flkty.selectedElement.alt;
-        });
+while (siemaDiv.firstChild) {
+    mySiema.remove(0);
+    siemaDiv.removeChild(siemaDiv.firstChild);
+}     
 
 
+            // mySiema.destroy(true, () => {
+                var imgs = pgContents.find(function (element) {
+                    return element.id == 12;
+                });
+                console.log(imgs);
+                var siemaDiv = document.querySelector(".siema");
 
+                imgs.images.forEach(image => {
+                    console.log(image);
+                    var img = document.createElement("img");
+                    img.setAttribute("src", "images/playgrounds/" + image.src);
+                    img.setAttribute("alt", image.alt);
+                    siemaDiv.appendChild(img);
+                    mySiema.append(img);
+                })
+
+            // });
+            
+
+            
+            document.getElementById('prev').addEventListener('click', (e) => {
+                mySiema.prev();
+                e.stopPropagation();
+            });
+            document.getElementById('next').addEventListener('click', (e) => {
+                mySiema.next();
+                e.stopPropagation();
+            });
+        }
+
+
+
+        function printSlideIndex() {
+            let imageTotal = pgContents[0].images.length;
+            var caption = document.querySelector('.caption');
+            caption.textContent = pgContents[0].images[parseInt(this.currentSlide % imageTotal)].alt
+            var credit = document.createElement("span");
+            credit.className = 'credit';
+            credit.textContent = pgContents[0].images[parseInt(this.currentSlide % imageTotal)].credit;
+            caption.appendChild(credit);
+        }
 
         function onMapClick(e) {
             pgmap.fitBounds([[22.271194, 114.178092], [22.286079, 114.192911]], { padding: [0, 0] });
@@ -368,7 +421,6 @@
 
         L.geoJSON(serachMarkers, {
             pointToLayer: function (geoJsonPoint, latlng) {
-                console.log(geoJsonPoint.properties.icon)
                 return L.marker(latlng, { icon: searchMkr1 })
             },
             onEachFeature: searchZoom
@@ -395,6 +447,8 @@
         const numberWithCommas = (x) => {
             return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
         }
+
+
 
     </script>
 
