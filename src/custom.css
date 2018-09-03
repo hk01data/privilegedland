@@ -56,13 +56,43 @@ body {
 
 
 .card-header {
-    /* background-color: #f6f6f6; */
+    /* background-color: #f6f6f6;
+    height: 4rem; */
     /* padding: 1rem 2rem 0rem !important; */
-    padding: 0 !important;
     /* border: none; */
 }
 
+.card .close {
+    font-size: 1.8rem;
+    font-weight: 700;
+    line-height: 1;
+    color: #000;
+    text-shadow: 0 1px 0 #fff;
+    opacity: .8;
+    cursor: pointer;
+}
 
+.card #close-card {
+    margin-left: 8px; 
+}
+
+.card #nextBtn {
+    margin-left: 12px; 
+}
+
+/* .left {
+    position: absolute;
+    top: 0.75rem;
+    right: 2rem;
+    z-index: 2;
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1;
+    color: #000;
+    text-shadow: 0 1px 0 #fff;
+    opacity: .8;
+    cursor: pointer;
+} */
 
 .card-body {
     overflow-y: auto;
@@ -75,7 +105,7 @@ body {
 }
 
 .card .container {
-    padding: 0 !important;
+    /* padding: 0 !important; */
 }
 .card-footer {
     border: none !important;
@@ -103,26 +133,13 @@ body {
     }
 } */
 
-.close {
-    position: absolute;
-    top: 0.75rem;
-    right: 0.75rem;
-    z-index: 2;
-    font-size: 1.5rem;
-    font-weight: 700;
-    line-height: 1;
-    color: #000;
-    text-shadow: 0 1px 0 #fff;
-    opacity: .5;
-    cursor: pointer;
-}
 
 
 
-.card #branchStatus {
-    padding: 1px 10px;
-    margin-bottom: 1rem;
-    border-radius: 0.8rem;
+.card #cardType {
+    padding: 2px 15px;
+    border-radius: 1rem;
+    font-size: 1.2rem;
     font-weight: 300;
     display: inline-block;
     color: black;
@@ -141,9 +158,10 @@ body {
 }
 
 .card #cardName {
-    font-size: 1.6rem;
-    font-weight: 500;
     display: block;
+    margin: 0.8rem 1.25rem;
+    font-size: 1.5rem;
+    font-weight: 500;
     margin-bottom: .8rem;
 }
 
@@ -157,6 +175,10 @@ body {
 }
 
 
+.card .remarks {
+    font-size: 90%;
+    margin-top:5px;
+}
 
 
 .carousel {

@@ -35,8 +35,8 @@
 <body>
 
 
-<!-- As a heading -->
-<!-- <nav class="navbar navbar-dark bg-dark">
+    <!-- As a heading -->
+    <!-- <nav class="navbar navbar-dark bg-dark">
     <span class="navbar-brand mb-0 h1">Navbar</span>
     <ul class="nav justify-content-end">
         <li class="nav-item" id="prevBtn">
@@ -53,24 +53,24 @@
     <div id='mapid'></div>
     <div class="card card--custom card--hidden">
         <div class="card-header">
-            <!-- <span id="branchStatus"></span> -->
-            <span class="card-title" id="cardName"></span>
+            <span id="cardType"></span>
+            <button type="button" class="close" id="close-card" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <button type="button" class="close" id="nextBtn" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">＞</span>
+                    </button>
+                <button type="button" class="close" id="prevBtn" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">＜</span>
+                    </button>            
         </div>
         <div class="card-body">
-            <button type="button" class="close" id="close-card" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
-            <ul class="nav justify-content-end">
-                <li class="nav-item" id="prevBtn">
-                    <a class="nav-link" href="">Prev</a>
-                </li>
-                <li class="nav-item" id="nextBtn">
-                    <a class="nav-link" href="">Next</a>
-                </li>
-            </ul>
-            <div class="container">
+
+
+            <span class="card-title" id="cardName"></span>
+            
                 <div class="carousel">
-                    <img data-flickity-lazyload="https://s3-us-west-2.amazonaws.com/s.cdpn.io/82/orange-tree.jpg" alt="總教練沈金康（中）喜與李慧詩慶祝。（李澤彤攝）"
+                    <img data-flickity-lazyload="images/playgrounds/1-1.jpg" alt="總教練沈金康（中）喜與李慧詩慶祝。（李澤彤攝）"
                     />
                     <img data-flickity-lazyload="https://s3-us-west-2.amazonaws.com/s.cdpn.io/82/submerged.jpg" alt="救護站的菜大概較這豐富，「三餸一湯，但15分鐘內一定會吃完，你只可以吃這麼久。」（資料圖片/江智騫攝）"
                     />
@@ -79,9 +79,10 @@
                     <img data-flickity-lazyload="https://s3-us-west-2.amazonaws.com/s.cdpn.io/82/drizzle.jpg" alt="drizzle" />
                     <img data-flickity-lazyload="https://s3-us-west-2.amazonaws.com/s.cdpn.io/82/cat-nose.jpg" alt="cat nose" />
                 </div>
-
+                <div class="container">
                 <p class="caption">&nbsp;</p>
                 <ul class="fa-ul" id="cardDetail"></ul>
+                <p class="remarks"></p>
             </div>
         </div>
     </div>
@@ -173,31 +174,34 @@
 
         var card = document.querySelector('.card--custom');
         var card_header = document.querySelector('.card-header');
-        card_header.addEventListener('click', () => {
+        card_header.addEventListener('click', (event) => {
             card.classList.toggle('card--expanded');
+            event.stopPropagation();
         });
 
         var closeCard = document.querySelector('#close-card');
         closeCard.addEventListener('click', () => {
             card.classList.add("card--hidden");
-            if (card.classList.contains('card--expanded')) card.classList.toggle('card--expanded');
+            card.classList.remove('card--expanded');
         });
 
         var nextBtn = document.getElementById('nextBtn');
         nextBtn.addEventListener('click', function (event) {
             event.preventDefault();
-            if (currentID < 27) popByID(currentID + 1);
+            if (currentID < 32) popByID(currentID + 1);
             else popByID(1);
+            event.stopPropagation();
         })
 
         var prevBtn = document.getElementById('prevBtn');
         prevBtn.addEventListener('click', function (event) {
             event.preventDefault();
-            if (currentID > 0) popByID(currentID - 1);
-            else popByID(1);
+            if (currentID > 1) popByID(currentID - 1);
+            else popByID(32);
+            event.stopPropagation()
         })
 
-        
+
         function popByClick(feature, layer) {
             layer.on('click', function (e) {
                 changeState(e);
@@ -260,32 +264,38 @@
 
         function createPopup(e) {
             var prop;
-            console.log(e);
+
             if (e.type != "Feature") prop = e.target.feature.properties;
             else prop = e.properties;
+            
+            document.getElementById("cardType").textContent = prop["type"];
+            document.getElementById("cardType").className = (prop["type"] == "港島")? "blue": (prop["type"] == "九龍")? "red" : "green";
 
-            document.getElementById("cardName").textContent = prop["chi_name"];
+            document.getElementById("cardName").innerHTML = prop["chi_name"];
+            var content = `
+                    <li><span class="fa-li"><i class="fas fa-expand-arrows-alt fa-fw"></i></span>面積：${(prop["area"] > 9999) ? numberWithCommas(Math.round(prop["area"] / 10000, 0)) + '公頃' : numberWithCommas(prop["area"]) + '呎'}</li>`
 
-            document.getElementById("cardDetail").innerHTML =
-                `
-                    <li><span class="fa-li"><i class="fas fa-map-marker-alt fa-fw"></i></span>面積：${prop["area"]}呎</li>
-                    <li><span class="fa-li"><i class="fas fa-map-marker-alt fa-fw"></i></span>會員：${prop["members"]}人</li>
-                    <li><span class="fa-li"><i class="fas fa-map-marker-alt fa-fw"></i></span>體育設施平均使用率：${prop["avg_usage"]}</li>
-                    <li><span class="fa-li"><i class="fas fa-map-marker-alt fa-fw"></i></span>最新年度的商業收入佔比：${prop["comm_revenue"]}</li>
-                    <li><span class="fa-li"><i class="fas fa-map-marker-alt fa-fw"></i></span>契約到期：${prop["remarks"]}</li>
+            content += `<li><span class="fa-li"><i class="fas fa-user-circle fa-fw"></i></span>會員：${numberWithCommas(prop["members"])}人</li>`;
 
-                    <p>廣深港高鐵香港段將於下月23日通車，再爆山「豆腐渣」醜聞。公民黨立法會議員譚文豪今日（31日）表示，收到消息指八鄉到石崗路段，在前日（29日）紅色暴雨警告生效時，有負責轉換路軌的路軌轉轍器，因路軌水浸而被浸壞。他指這情況下控制室將無法控制列車改道，駛向錯誤方向，要求港鐵就事件向公眾交待。</p><p>廣深港高鐵香港段將於下月23日通車，再爆山「豆腐渣」醜聞。公民黨立法會議員譚文豪今日（31日）表示，收到消息指八鄉到石崗路段，在前日（29日）紅色暴雨警告生效時，有負責轉換路軌的路軌轉轍器，因路軌水浸而被浸壞。他指這情況下控制室將無法控制列車改道，駛向錯誤方向，要求港鐵就事件向公眾交待。</p><p>廣深港高鐵香港段將於下月23日通車，再爆山「豆腐渣」醜聞。公民黨立法會議員譚文豪今日（31日）表示，收到消息指八鄉到石崗路段，在前日（29日）紅色暴雨警告生效時，有負責轉換路軌的路軌轉轍器，因路軌水浸而被浸壞。他指這情況下控制室將無法控制列車改道，駛向錯誤方向，要求港鐵就事件向公眾交待。</p><p>廣深港高鐵香港段將於下月23日通車，再爆山「豆腐渣」醜聞。公民黨立法會議員譚文豪今日（31日）表示，收到消息指八鄉到石崗路段，在前日（29日）紅色暴雨警告生效時，有負責轉換路軌的路軌轉轍器，因路軌水浸而被浸壞。他指這情況下控制室將無法控制列車改道，駛向錯誤方向，要求港鐵就事件向公眾交待。</p>             
+            if (prop["avg_usage"]) content += `<li><span class="fa-li"><i class="fas fa-golf-ball fa-fw"></i></span>體育設施平均使用率：${prop["avg_usage"]}</li>`
+            if (prop["comm_revenue"] > 0) content += `<li><span class="fa-li"><i class="fas fa-hand-holding-usd fa-fw"></i></span>最新年度的商業收入佔比：${prop["comm_revenue_percent"]}</li>`
+
+                +
+                `<li><span class="fa-li"><i class="fas fa-calendar-times fa-fw"></i></span>契約到期：${prop["due_date"]}</li>         
             `
+
+            document.getElementById("cardDetail").innerHTML = content;
+            document.querySelector(".remarks").innerHTML = prop["remarks"];
+
             card.classList.remove("card--hidden");
         }
 
         // external js: flickity.pkgd.js
 
         var flkty = new Flickity('.carousel', {
-            imagesLoaded: true,
+            // imagesLoaded: true,
             percentPosition: false,
             wrapAround: true,
-            lazyLoad: true,
             pageDots: false
         });
 
@@ -297,7 +307,7 @@
         });
 
 
-        
+
 
         function onMapClick(e) {
             pgmap.fitBounds([[22.271194, 114.178092], [22.286079, 114.192911]], { padding: [0, 0] });
@@ -309,62 +319,62 @@
         })
 
 
-var serachMarkers = {
-  "type": "FeatureCollection",
-  "features": [
-    {
-      "type": "Feature",
-      "properties": {
-        "bound": [[22.271194, 114.178092], [22.286079, 114.192911]],
-        "icon": "searchMkr1",
-        "marker-size": "medium",
-        "marker-symbol": ""
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-            114.180181,
-          22.262056
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "bound": [[22.302329, 114.172774], [22.310514, 114.179198]],
-        "icon": "searchMkr1",
-        "marker-size": "medium",
-        "marker-symbol": ""
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-        114.175392,
-            22.312573,
-        ]
-      }
-    }
-  ]
-}
+        var serachMarkers = {
+            "type": "FeatureCollection",
+            "features": [
+                {
+                    "type": "Feature",
+                    "properties": {
+                        "bound": [[22.271194, 114.178092], [22.286079, 114.192911]],
+                        "icon": "searchMkr1",
+                        "marker-size": "medium",
+                        "marker-symbol": ""
+                    },
+                    "geometry": {
+                        "type": "Point",
+                        "coordinates": [
+                            114.180181,
+                            22.262056
+                        ]
+                    }
+                },
+                {
+                    "type": "Feature",
+                    "properties": {
+                        "bound": [[22.302329, 114.172774], [22.310514, 114.179198]],
+                        "icon": "searchMkr1",
+                        "marker-size": "medium",
+                        "marker-symbol": ""
+                    },
+                    "geometry": {
+                        "type": "Point",
+                        "coordinates": [
+                            114.175392,
+                            22.312573,
+                        ]
+                    }
+                }
+            ]
+        }
 
-var searchMkr1 = L.icon({
-    iconUrl: 'images/searchMarker.png',
-    iconSize: [48, 48],
-    iconAnchor: [24, 24]
-});
+        var searchMkr1 = L.icon({
+            iconUrl: 'images/searchMarker.png',
+            iconSize: [48, 48],
+            iconAnchor: [24, 24]
+        });
 
 
-var searchMkr_layer = new L.FeatureGroup();
+        var searchMkr_layer = new L.FeatureGroup();
 
-L.geoJSON(serachMarkers, {
-    pointToLayer: function (geoJsonPoint, latlng) {
-        console.log(geoJsonPoint.properties.icon)
-        return L.marker(latlng, { icon: searchMkr1 })   
-    },
-    onEachFeature: searchZoom
-}).addTo(searchMkr_layer);
+        L.geoJSON(serachMarkers, {
+            pointToLayer: function (geoJsonPoint, latlng) {
+                console.log(geoJsonPoint.properties.icon)
+                return L.marker(latlng, { icon: searchMkr1 })
+            },
+            onEachFeature: searchZoom
+        }).addTo(searchMkr_layer);
 
-pgmap.addLayer(searchMkr_layer);
+        pgmap.addLayer(searchMkr_layer);
 
         function searchZoom(feature, layer) {
             layer.on('click', function (e) {
@@ -379,8 +389,12 @@ pgmap.addLayer(searchMkr_layer);
             else {
                 pgmap.removeLayer(searchMkr_layer);
             }
-    });
+        });
 
+
+        const numberWithCommas = (x) => {
+            return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        }
 
     </script>
 
