@@ -1,0 +1,122 @@
+<html>
+
+<head>
+    <style>
+        body {
+            width: 100%;
+            max-width: 30rem;
+            margin: 0 auto;
+        }
+
+        img {
+            width: 100%;
+        }
+
+        .siema {
+            margin: 1rem 0;
+        }
+    </style>
+    <script src="src/pgContents.js"></script>
+    <script src="src/siema.min.js"></script>
+</head>
+
+<body>
+    <div class="siema">
+        <div><img src="https://pawelgrzybek.com/siema/assets/siema--pink.svg" alt="Siema image" /></div>
+        <div><img src="https://pawelgrzybek.com/siema/assets/siema--yellow.svg" alt="Siema image" /></div>
+        <div><img src="https://pawelgrzybek.com/siema/assets/siema--pink.svg" alt="Siema image" /></div>
+        <div><img src="https://pawelgrzybek.com/siema/assets/siema--yellow.svg" alt="Siema image" /></div>
+        <div><img src="https://pawelgrzybek.com/siema/assets/siema--yellow.svg" alt="Siema image" /></div>    
+    </div>
+
+    <button class="destroy">Destroy (keep the markup)</button>
+    <button class="init">Init</button>
+
+</body>
+<script>
+    // var mySiema = new Siema();
+    // const destroy = document.querySelector('.destroy');
+    // const init = document.querySelector('.init');
+
+    // destroy.addEventListener('click', () => mySiema.destroy(false, () => {
+    //     console.log('Destroy it bro 💣 💣 💣');
+    //     deleteAll();
+    // }
+    // ));
+
+    // init.addEventListener('click', () => {
+    //     initSiema();
+    //     mySiema.init();
+    // });
+
+    // function deleteAll() {
+    //     var siemaDiv = document.querySelector(".siema");
+    //     while (siemaDiv.firstChild) {
+    //         siemaDiv.removeChild(siemaDiv.firstChild);
+    //     }
+    // }
+
+    // function initSiema() {
+    //     var imgs = pgContents.find(function (element) {
+    //         return element.id == 12;
+    //     });
+
+    //     console.log(imgs);
+    //     var siemaDiv = document.querySelector(".siema");
+
+    //     imgs.images.forEach(image => {
+    //         console.log(image);
+    //         var img = document.createElement("img");
+    //         img.setAttribute("src", "images/playgrounds/" + image.src);
+    //         img.setAttribute("alt", image.alt);
+    //         siemaDiv.appendChild(img);
+    //         mySiema.append(img);
+    //     })
+    // }
+
+    var mySiema = new Siema();
+    const destroy = document.querySelector('.destroy');
+    const init = document.querySelector('.init');
+
+    destroy.addEventListener('click', () => {
+        console.log('Destroy it bro 💣 💣 💣');
+        // var siemaDiv = document.querySelector(".siema");
+        // while (siemaDiv.firstChild) {
+        //     mySiema.remove(0);
+        // }
+        for (var i = 4; i>=0; i--) {
+        mySiema.remove(i);
+    }
+    }
+    );
+
+    
+
+    init.addEventListener('click', () => {
+    var imgs = pgContents.find(function (element) {
+            return element.id == 12;
+        });
+
+        console.log(imgs);
+        var siemaDiv = document.querySelector(".siema");
+
+        imgs.images.forEach(image => {
+            console.log(image);
+            var img = document.createElement("img");
+            img.setAttribute("src", "images/playgrounds/" + image.src);
+            img.setAttribute("alt", image.alt);
+            siemaDiv.appendChild(img);
+            mySiema.append(img);
+        })
+        mySiema.goTo(0);
+
+    });
+
+
+
+
+
+
+</script>
+
+</html>>

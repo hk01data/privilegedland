@@ -70,9 +70,13 @@
 
 
     <script>
+        var layers = {};
         var pgmap;
         var entrySource;
-        var currentID;
+        var currentID = 0;
+        var lastClickedLayerID = 0;
+        var playground_layer;
+        
         const mySiema = new Siema({
                 selector: '.siema',
                 duration: 200,
@@ -164,7 +168,7 @@
             }).addTo(pgmap);
 
             playground_layer = L.geoJSON(playgrounds, {
-                onEachFeature: popByClick,
+                onEachFeature: loopLayer,
                 style: shape_blue,
             }).addTo(pgmap);
 
@@ -192,12 +196,15 @@
         closeCard.addEventListener('click', (event) => {
             card.classList.add("card--hidden");
             card.classList.remove('card--expanded');
+            resetStyle(currentID);
+            currentID = 0;
             event.stopPropagation();
         });
 
         var nextBtn = document.getElementById('nextBtn');
         nextBtn.addEventListener('click', function (event) {
             event.preventDefault();
+            lastClickedLayerID = currentID;
             if (currentID < 32) popByID(currentID + 1);
             else popByID(1);
             event.stopPropagation();
@@ -206,71 +213,115 @@
         var prevBtn = document.getElementById('prevBtn');
         prevBtn.addEventListener('click', function (event) {
             event.preventDefault();
+            lastClickedLayerID = currentID;
             if (currentID > 1) popByID(currentID - 1);
             else popByID(32);
             event.stopPropagation();
         })
 
-
-        function popByClick(feature, layer) {
-            feature.properties.bounds_calculated = layer.getBounds();
+        function loopLayer(feature, layer) {
+            layers[feature.properties.id] = layer;
             layer.on('click', function (e) {
-                changeState(e);
-                createPopup(e);
-                zoomToPolygon(e);
+                popByClick(e);
             })
         }
 
+        function popByClick(e) {
+            console.log(lastClickedLayerID + " | " + currentID);
+                if (parseInt(e.target.feature.properties.id) != currentID) {
+                    if (currentID != 0) lastClickedLayerID = currentID;
+                    popByID(e.target.feature.properties.id);
+                    console.log("pop");
+                }
+                    
+        }
+
         function popByID(id) {
+            int_ID = parseInt(id);
             playgrounds.find(function (element) {
-                if (parseInt(element.properties.id) == id) {
-                    changeState(id);
+                if (parseInt(element.properties.id) == int_ID) {
+                    switch (int_ID) {
+                        case 2:
+                            layers[2.1].setStyle(shape_red);
+                            layers[2.2].setStyle(shape_red);
+                            break;
+                        case 10:
+                            layers[10.1].setStyle(shape_red);
+                            layers[10.2].setStyle(shape_red);
+                            break;
+
+                        case 17:
+                            layers[17.1].setStyle(shape_red);
+                            layers[17.2].setStyle(shape_red);
+                            break;
+                        default:
+                            layers[int_ID].setStyle(shape_red);
+                    }
+                    resetStyle(lastClickedLayerID);
+                    changeState(int_ID);
                     createPopup(element);
-                    zoomToPolygon(L.geoJson(element));
+                    // zoomToPolygon(L.geoJson(element));
+                    zoomToPolygon(int_ID);
                 }
             });
         }
 
+        function resetStyle(id) {
+            if (id) {
+                        switch (id) {
+                            case 2:
+                                playground_layer.resetStyle(layers[2.1]);
+                                playground_layer.resetStyle(layers[2.2]);
+                                break;
+                            case 10:
+                                playground_layer.resetStyle(layers[10.1]);
+                                playground_layer.resetStyle(layers[10.2]);
+                                break;
+                            case 17:
+                                playground_layer.resetStyle(layers[17.1]);
+                                playground_layer.resetStyle(layers[17.2]);
+                                break;
+                            default:
+                                playground_layer.resetStyle(layers[id]);
+                        }
+                    }
+        }
+
         function changeState(e) {
-            if (e.type) {
-                // e.target.setStyle(shape_red);
-                currentID = parseInt(e.target.feature.properties.id);
-            }
-            else {
-                //e.target.setStyle(shape_red);
-                currentID = e;
-            }
+            currentID = e;
+            console.log("current ID: "+ currentID);
 
             // Change URL onClick
             var stateObj = { playground_id: currentID };
             window.history.pushState(stateObj, "", `#${entrySource}&id=${currentID}`);
         }
 
-        function zoomToPolygon(e) {
-            if (e.target) bbox = e.target.getBounds();
-            else bbox = e.getBounds();
-            // console.log(e);
-            // console.log(e.target.feature.properties.bounds_calculated);
-            // console.log(bbox.toBBoxString());
-            // console.log(bbox.getSouth());
-            tuned_bbox = bbox;
+        function zoomToPolygon(id) {
+            // if (e.target) bbox = e.target.getBounds();
+            // else bbox = e.getBounds();
+            
+            
             switch (parseInt(currentID)) {
                 case 2:
-                    tuned_bbox = L.latLngBounds([22.278790, 114.190460], [22.280482, 114.192329]);
+                bbox = L.latLngBounds([22.278790, 114.190460], [22.280482, 114.192329]);
                     break;
                 case 10:
-                    tuned_bbox = L.latLngBounds([22.273413, 114.180323], [22.275704, 114.183000]);
+                bbox = L.latLngBounds([22.273413, 114.180323], [22.275704, 114.183000]);
                     break;
                 case 17:
-                    tuned_bbox = L.latLngBounds([22.267781, 114.190859], [22.269909, 114.193376]);
+                bbox = L.latLngBounds([22.267781, 114.190859], [22.269909, 114.193376]);
                     break;
+                default:
+                bbox = layers[id].getBounds();
             }
+            console.log(bbox)
             // console.log(tuned_bbox)
-            tuned_bbox._southWest.lat = bbox.getSouth() - (bbox.getNorth() - bbox.getSouth()) * 2.5;
-            //tuned_bbox.extend([bbox.getSouth() - (bbox.getNorth() - bbox.getSouth()) * 2.5, bbox.getEast()]);
-            console.log('extned');
-            console.log(tuned_bbox.getSouth());
-            console.log(bbox.getSouth());
+            // tuned_bbox._southWest.lat = bbox.getSouth() - (bbox.getNorth() - bbox.getSouth()) * 2.5;
+            tuned_bbox = bbox;
+            tuned_bbox.extend([bbox.getSouth() - (bbox.getNorth() - bbox.getSouth()) * 2.5, bbox.getEast()]);
+            // console.log('extned');
+            // console.log(tuned_bbox.getSouth());
+            // console.log(bbox.getSouth());
             pgmap.fitBounds(tuned_bbox, { padding: [50, 50] });
 
         }
@@ -306,7 +357,7 @@
             card.classList.remove("card--hidden");
 
             console.log(prop["id"]);
-            initSiema();
+            // initSiema();
         }
 
         function initSiema() {
@@ -368,7 +419,7 @@ while (siemaDiv.firstChild) {
 
 
         pgmap.on('zoomend', function () {
-            console.log(pgmap.getZoom());
+            // console.log(pgmap.getZoom());
         })
 
 
