@@ -24,7 +24,7 @@ body {
 
 
 .card--custom {
-    top: 40%;
+    top: 37.5%;
     height: 100%;
     left: 0;
     right: 0;
@@ -58,7 +58,7 @@ body {
 .card-header {
     /* background-color: #f6f6f6;
     height: 4rem; */
-    /* padding: 1rem 2rem 0rem !important; */
+    padding: 0.5rem 0.75rem 0.5rem 1rem !important;
     /* border: none; */
 }
 
@@ -139,9 +139,9 @@ body {
 
 
 .card #cardType {
-    padding: 2px 15px;
+    padding: 0.8px 12px;
     border-radius: 1rem;
-    font-size: 1.2rem;
+    font-size: 1rem;
     font-weight: 300;
     display: inline-block;
     color: black;
@@ -161,7 +161,7 @@ body {
 
 .card #cardName {
     display: block;
-    margin: 0.8rem 1.25rem;
+    margin: 0.6rem 1.25rem;
     font-size: 1.5rem;
     font-weight: 500;
     margin-bottom: .8rem;
@@ -187,8 +187,10 @@ body {
 
 
 .caption {
+    ackground: #FAFAFA;
     display: inline-block;
     margin: 5px;
+    padding: 10px;
     font-size: 0.9rem;
     line-height: 1rem;
 }
@@ -217,4 +219,38 @@ body {
 #next {
     position: absolute;
     right: 0;
+}
+
+
+.carousel-cell {
+  width: 100%; /* full width */
+  height: 160px; /* height of carousel */
+  margin-right: 10px;
+}
+
+
+
+
+.carousel {
+  background: #FAFAFA;
+  width: 100%; /* full width */
+  height: 160px; /* height of carousel */
+  margin-right: 10px;
+}
+
+.carousel img {
+  display: block;
+  height: 150px;
+}
+
+
+
+.flickity-page-dots {
+  bottom: -60px;
+}
+
+@media screen and ( min-width: 768px ) {
+  .carousel img {
+    height: 400px;
+  }
 }

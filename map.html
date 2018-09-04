@@ -27,6 +27,11 @@
     <script src="src/playgrounds.js"></script>
     <script src="src/pgContents.js"></script>
     <script src="src/siema.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/flickity@2/dist/flickity.min.css">
+    <script src="https://unpkg.com/flickity@2/dist/flickity.pkgd.min.js"></script>
+
+
+
 </head>
 
 <body>
@@ -54,14 +59,13 @@
                     <button id="prev">prev</button>
                     <button id="next">next</button>
                 </div>
-                <div class="siema">
-                    <div><img src="images/playgrounds/1-1.jpg" alt="Siema image" /></div>
-                    <div><img src="images/playgrounds/1-2.jpg" alt="Siema image" /></div>
-                    <div><img src="images/playgrounds/1-3.jpg" alt="Siema image" /></div>
-                    <div><img src="images/playgrounds/1-4.jpg" alt="Siema image" /></div>
-                </div>
+                <div class="siema"></div>
                 <p class="caption"></p>&nbsp;<span class="credit"></span>
             </div>
+            <!-- <div class="carousel"></div>
+              
+              <p class="caption">&nbsp;</p> -->
+
 
             <div class="container">
                 <ul class="fa-ul" id="cardDetail"></ul>
@@ -81,21 +85,9 @@
         var lastClickedLayerID = -1;
         var playground_layer;
 
-        const mySiema = new Siema({
-            selector: '.siema',
-            duration: 200,
-            easing: 'ease-out',
-            perPage: 1,
-            startIndex: 0,
-            draggable: true,
-            multipleDrag: true,
-            threshold: 20,
-            loop: true,
-            rtl: false,
-            onInit: printSlideIndex,
-            onChange: printSlideIndex,
-        });
+        var mySiema;
 
+        var flkty;
         var shape_blue = {
             'color': '#0017c7',
             'weight': 2,
@@ -153,7 +145,7 @@
                 zoom: 11, //(screen.width >= 768) ? 11 : 11,
                 zoomSnap: 0,
                 zoomDelta: 1,
-                wheelPxPerZoomLevel: 20,
+                wheelPxPerZoomLevel: 40,
                 maxBounds: ([
                     [21.795661, 113.073929],
                     [23.113786, 115.230749]
@@ -193,10 +185,13 @@
         closeCard.addEventListener('click', (event) => {
             card.classList.add("card--hidden");
             card.classList.remove('card--expanded');
+            if (flkty) flkty.destroy();
+            destroySiema();
             lastClickedLayerID = currentID;
             resetStyle(currentID);
             currentID = 0;
             console.log("lastClickedLayerID: " + lastClickedLayerID + " | currentID: " + currentID);
+
             event.stopPropagation();
         });
 
@@ -204,8 +199,11 @@
         nextBtn.addEventListener('click', function (event) {
             event.preventDefault();
             lastClickedLayerID = currentID;
-            if (currentID < 32) popByID(currentID + 1);
+            if (flkty) flkty.destroy();
+            destroySiema();
+            if (currentID < 27) popByID(currentID + 1);
             else popByID(1);
+
             event.stopPropagation();
         })
 
@@ -213,10 +211,23 @@
         prevBtn.addEventListener('click', function (event) {
             event.preventDefault();
             lastClickedLayerID = currentID;
+            if (flkty) flkty.destroy();
+            destroySiema();
             if (currentID > 1) popByID(currentID - 1);
-            else popByID(32);
+            else popByID(27);
+
             event.stopPropagation();
         })
+
+        document.getElementById('prev').addEventListener('click', (e) => {
+            mySiema.prev();
+            e.stopPropagation();
+        });
+
+        document.getElementById('next').addEventListener('click', (e) => {
+            mySiema.next();
+            e.stopPropagation();
+        });
 
         function loopLayer(feature, layer) {
             layers[feature.properties.id] = layer;
@@ -234,7 +245,7 @@
                 default:
                     bbox = layer.getBounds();
             }
-            var cal_box = bbox.extend([bbox.getSouth() - (bbox.getNorth() - bbox.getSouth()) * 3, bbox.getEast()]);
+            var cal_box = bbox.extend([bbox.getSouth() - (bbox.getNorth() - bbox.getSouth()) * 2.5, bbox.getEast()]);
             layers[feature.properties.id].feature.properties.cal_bound = cal_box;
 
             layer.on('click', function (e) {
@@ -271,7 +282,7 @@
                         default:
                             layers[int_ID].setStyle(shape_red);
                     }
-                    
+
                     resetStyle(lastClickedLayerID);
                     changeState(int_ID);
                     createPopup(element);
@@ -355,65 +366,30 @@
             document.getElementById("cardDetail").innerHTML = content;
             document.querySelector(".remarks").innerHTML = prop["remarks"];
 
-            if (prop['infogram']) {
-                document.getElementById("infogram").innerHTML = prop['infogram'];
-                !function(e,t,n,s){var i="InfogramEmbeds",o=e.getElementsByTagName(t)[0],d=/^http:/.test(e.location)?"http:":"https:";if(/^\/{2}/.test(s)&&(s=d+s),window[i]&&window[i].initialized)window[i].process&&window[i].process();else if(!e.getElementById(n)){var a=e.createElement(t);a.async=1,a.id=n,a.src=s,o.parentNode.insertBefore(a,o)}}(document,"script","infogram-async","https://e.infogram.com/js/dist/embed-loader-min.js");
-            }
-
-
+            // if (prop['infogram']) {
+            //     document.getElementById("infogram").innerHTML = prop['infogram'];
+            //     !function (e, t, n, s) { var i = "InfogramEmbeds", o = e.getElementsByTagName(t)[0], d = /^http:/.test(e.location) ? "http:" : "https:"; if (/^\/{2}/.test(s) && (s = d + s), window[i] && window[i].initialized) window[i].process && window[i].process(); else if (!e.getElementById(n)) { var a = e.createElement(t); a.async = 1, a.id = n, a.src = s, o.parentNode.insertBefore(a, o) } }(document, "script", "infogram-async", "https://e.infogram.com/js/dist/embed-loader-min.js");
+            // }
+            initSiema(parseInt(element.properties.id));
             card.classList.remove("card--hidden");
 
-            // changeImages(addImages);
-            // a();
         }
 
-        function a() {
-            const destroy = document.querySelector('.destroy');
-            const init = document.querySelector('.init');
+        var siemaDiv = document.querySelector(".siema");
 
-            destroy.addEventListener('click', () => {
-                console.log('Destroy it bro 💣 💣 💣');
-                for (let i = 0, n = document.querySelector(".siema div").childElementCount; i < n; i++) {
-                    mySiema.remove(0);
+
+        function destroySiema() {
+            mySiema.destroy(false, () => {
+                while (siemaDiv.firstChild) {
+                    siemaDiv.removeChild(siemaDiv.firstChild);
                 }
-            }
-            );
-
-            init.addEventListener('click', () => {
-                var imgs = pgContents.find(function (element) {
-                    return element.id == 12;
-                });
-
-                console.log(imgs);
-                var siemaDiv = document.querySelector(".siema");
-
-                imgs.images.forEach(image => {
-                    console.log(image);
-                    var img = document.createElement("img");
-                    img.setAttribute("src", "images/playgrounds/" + image.src);
-                    img.setAttribute("alt", image.alt);
-                    siemaDiv.appendChild(img);
-                    mySiema.append(img);
-                })
-                mySiema.goTo(0);
-
-            });
+                console.log('Destroy it bro 💣 💣 💣');
+            })
         }
 
-
-
-
-        function changeImages(callback) {
-            for (let i = 0, n = document.querySelector(".siema div").childElementCount; i <= n; i++) {
-                mySiema.remove(0);
-            }
-            console.log('Destroy it bro 💣 💣 💣');
-            callback();
-        }
-
-        function addImages() {
+        function initSiema(id) {
             var imgs = pgContents.find(function (element) {
-                return element.id == 12;
+                return element.id == id;
             });
 
             console.log(imgs);
@@ -425,33 +401,32 @@
                 img.setAttribute("src", "images/playgrounds/" + image.src);
                 img.setAttribute("alt", image.alt);
                 siemaDiv.appendChild(img);
-                mySiema.append(img);
+                siemaDiv.append(img);
             })
-            mySiema.goTo(0);
-
-
+            mySiema = new Siema({
+                onInit: printSlideIndex,
+                onChange: printSlideIndex
+            });
         }
-        document.getElementById('prev').addEventListener('click', (e) => {
-                mySiema.prev();
-                e.stopPropagation();
-            });
-            document.getElementById('next').addEventListener('click', (e) => {
-                mySiema.next();
-                e.stopPropagation();
-            });
+
+
+        
 
         function printSlideIndex() {
-            let imageTotal = pgContents[0].images.length;
+            var imgs = pgContents.find(function (element) {
+                return element.id == currentID;
+            });
+            let imageTotal = imgs.images.length;
             var caption = document.querySelector('.caption');
-            caption.textContent = pgContents[0].images[parseInt(this.currentSlide % imageTotal)].alt
+            caption.textContent = imgs.images[parseInt(this.currentSlide % imageTotal)].alt
             var credit = document.createElement("span");
             credit.className = 'credit';
-            credit.textContent = pgContents[0].images[parseInt(this.currentSlide % imageTotal)].credit;
+            credit.textContent = imgs.images[parseInt(this.currentSlide % imageTotal)].credit;
             caption.appendChild(credit);
         }
 
         function onMapClick(e) {
-            pgmap.fitBounds([[22.271194, 114.178092], [22.286079, 114.192911]], { padding: [0, 0] });
+            pgmap.fitBounds([[22.271194, 114.178092], [22.286079, 114.192911]], { padding: [50, 50] });
         }
 
         var serachMarkers = {
@@ -512,7 +487,7 @@
 
         function searchZoom(feature, layer) {
             layer.on('click', function (e) {
-                pgmap.fitBounds(feature.properties.bound, { padding: [0, 0] });
+                pgmap.fitBounds(feature.properties.bound, { padding: [50, 50] });
             })
         }
 
