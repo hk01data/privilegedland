@@ -23,43 +23,89 @@ body {
 }
 
 
-.card--custom {
-    top: 37.5%;
-    height: 100%;
-    left: 0;
-    right: 0;
+.card--mobile {
     position: fixed;
-    /* background-color: #f6f6f6; */
     z-index: 5010;
     visibility: visible;
     opacity: 1;
-    /* transition: opacity 0.33s linear; */
     border-top-left-radius: 8px !important;
     border-top-right-radius: 8px !important;
-    border: none;
+    border-bottom-left-radius: 8px !important;
+    border-bottom-right-radius: 8px !important;
     line-height: 1.8rem;
-
-    -webkit-transition: all .2s ease-in-out,top .2s ease-out; 
-    transition: all .2s ease-in-out,top .2s ease-out;
 }
 
 
-.card--expanded:not(.card--hidden) {
-    top: 0%;
+
+
+
+@media only screen and (max-width: 835px) {
+    .card--mobile {
+        top: 37.5%;
+        height: 62.5%;
+        left: 0;
+        right: 0;
+        -webkit-transition: all .2s ease-in-out,top .2s ease-out; 
+        transition: all .2s ease-in-out,top .2s ease-out;
+    }
+
+    .card--expanded:not(.card--hidden) {
+        top: 0%;
+        height: 100%;
+    }
+
+    .card--hidden {
+        top: 100%;
+        -webkit-transition: all .2s ease-in-out,top .2s ease-out; 
+        transition: all .2s ease-in-out,top .2s ease-out;
+    }
+
+    .card-footer {
+        height: 50px;
+        background-color: #F8F8F8;
+        width: 100%;
+        position: fixed;
+        bottom:0%;
+        z-index: 5020;
+    }
 }
 
-.card--hidden {
-    top: 100%;
-    -webkit-transition: all .2s ease-in-out,top .2s ease-out; 
-    transition: all .2s ease-in-out,top .2s ease-out;
+.show {
+    visibility: visible;
 }
+
+.hide {
+    visibility: hidden;
+}
+
+@media only screen and (min-width: 835px) {
+    .card--mobile {
+        visibility: visible;
+        max-width: 350px;
+        max-height: 80%;
+        top: 100px;
+        left: 10px;
+        -webkit-transition: all .2s ease-in-out,top .2s ease-out; 
+        transition: all .2s ease-in-out,top .2s ease-out;
+    }
+
+    .card--expanded:not(.card--hidden) {
+        top: 100px;
+    }
+
+    .card--hidden {
+        visibility: hidden;
+        -webkit-transition: all .2s ease-in-out,top .2s ease-out; 
+        transition: all .2s ease-in-out,top .2s ease-out;
+    }
+}
+
+
+
 
 
 .card-header {
-    /* background-color: #f6f6f6;
-    height: 4rem; */
-    padding: 0.5rem 0.75rem 0.5rem 1rem !important;
-    /* border: none; */
+    padding: 0.5rem 0;
 }
 
 .card .close {
@@ -73,13 +119,16 @@ body {
 }
 
 .card #close-card {
-    margin-left: 8px; 
+    padding: 0 1.2rem 0 0rem; 
 }
 
 .card #nextBtn {
-    margin-left: 12px; 
+    padding: 0 0.6rem 0 0.0rem; 
 }
 
+.card #prevBtn {
+    padding: 0 0.6rem 0 0.0rem; 
+}
 /* .left {
     position: absolute;
     top: 0.75rem;
@@ -106,39 +155,15 @@ body {
     padding: 0 !important;
 }
 
-.card .container {
-    /* padding: 0 !important; */
-}
-.card-footer {
-    border: none !important;
-    /* padding: .75rem 1.25rem !important; */
-}
 
-/* @media only screen and (max-width: 835px) {
-    .card--custom {
-        width: 100%;
-        bottom: 0;
-        max-height: 60%;
-    }
-}
 
-@media only screen and (min-width: 835px) {
-    .card--custom {
-        max-width: 350px;
-        max-height: 80%;
-        top: 130px;
-        left: 10px;
-        border-top-left-radius: 8px !important;
-        border-top-right-radius: 8px !important;
-        border-bottom-left-radius: 8px !important;
-        border-bottom-right-radius: 8px !important;
-    }
-} */
+
 
 
 
 
 .card #cardType {
+    margin: 0 0 0 1.2rem;
     padding: 0.8px 12px;
     border-radius: 1rem;
     font-size: 1rem;
@@ -161,10 +186,9 @@ body {
 
 .card #cardName {
     display: block;
-    margin: 0.6rem 1.25rem;
-    font-size: 1.5rem;
+    margin: 0.6rem 0 0.6rem 1.25rem;
+    font-size: 1.3rem;
     font-weight: 500;
-    margin-bottom: .8rem;
 }
 
 .card .fas {
@@ -202,55 +226,22 @@ body {
 }
 
 #siema_container {
-    
+    position: relative;
 }
 .siema_control {
 
     width: 100%;
     position: absolute;
     z-index: 1;
+    bottom: 50%;
 }
 
 #prev {
     position: absolute;
-    left: 0;
+    left: 2%;
 }
 
 #next {
     position: absolute;
-    right: 0;
-}
-
-
-.carousel-cell {
-  width: 100%; /* full width */
-  height: 160px; /* height of carousel */
-  margin-right: 10px;
-}
-
-
-
-
-.carousel {
-  background: #FAFAFA;
-  width: 100%; /* full width */
-  height: 160px; /* height of carousel */
-  margin-right: 10px;
-}
-
-.carousel img {
-  display: block;
-  height: 150px;
-}
-
-
-
-.flickity-page-dots {
-  bottom: -60px;
-}
-
-@media screen and ( min-width: 768px ) {
-  .carousel img {
-    height: 400px;
-  }
+    right: 2%;
 }

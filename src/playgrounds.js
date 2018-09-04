@@ -1509,9 +1509,10 @@ var playgrounds = [
       "avg_usage": "71%",
       "comm_revenue": 82914000,
       "comm_revenue_percent": "38%",
-      "due_date": "",
+      "due_date": "2020年8月31日",
       "remarks": "",
-      "infogram" : '<div class="infogram-embed" data-id="0db5cb32-3e21-4af3-887c-c266880e1e86" data-type="interactive" data-title="私人遊樂場地契約-會員人均使用土地"></div>'
+      "infogram" : '<div class="infogram-embed" data-id="0db5cb32-3e21-4af3-887c-c266880e1e86" data-type="interactive" data-title="私人遊樂場地契約-會員人均使用土地"></div>',
+      "article" : "https://www.hk01.com/社會新聞/161649"
    },
    "geometry": {
       "type": "Polygon",

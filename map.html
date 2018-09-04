@@ -37,7 +37,7 @@
 <body>
 
     <div id='mapid'></div>
-    <div class="card card--custom card--hidden">
+    <div class="card card--mobile card--hidden">
         <div class="card-header">
             <span id="cardType"></span>
             <button type="button" class="close" id="close-card" data-dismiss="modal" aria-label="Close">
@@ -52,27 +52,22 @@
         </div>
         <div class="card-body">
             <span class="card-title" id="cardName"></span>
-            <!-- <button class="destroy">Destroy (keep the markup)</button>
-            <button class="init">Init</button> -->
             <div id="siema_container">
                 <div class="siema_control">
-                    <button id="prev">prev</button>
-                    <button id="next">next</button>
+                    <button id="prev" class="btn btn-light btn-sm">&#9668;</button>
+                    <button id="next" class="btn btn-light btn-sm">&#9658;</button>
                 </div>
                 <div class="siema"></div>
-                <p class="caption"></p>&nbsp;<span class="credit"></span>
             </div>
-            <!-- <div class="carousel"></div>
-              
-              <p class="caption">&nbsp;</p> -->
-
-
+                <p class="caption"></p>&nbsp;<span class="credit"></span>
+            
             <div class="container">
                 <ul class="fa-ul" id="cardDetail"></ul>
                 <p class="remarks"></p>
             </div>
             <div id="infogram"> </div>
         </div>
+        <div class="card-footer hide"><a id="article" href="" target="_blank">前往文章 ⟶</a></div>
     </div>
 
 
@@ -87,7 +82,6 @@
 
         var mySiema;
 
-        var flkty;
         var shape_blue = {
             'color': '#0017c7',
             'weight': 2,
@@ -173,10 +167,16 @@
 
 
 
-        var card = document.querySelector('.card--custom');
+        var card = document.querySelector('.card--mobile');
         var card_header = document.querySelector('.card-header');
+        var card_title = document.querySelector('.card-title');
 
         card_header.addEventListener('click', (event) => {
+            card.classList.toggle('card--expanded');
+            event.stopPropagation();
+        });
+
+        card_title.addEventListener('click', (event) => {
             card.classList.toggle('card--expanded');
             event.stopPropagation();
         });
@@ -185,7 +185,10 @@
         closeCard.addEventListener('click', (event) => {
             card.classList.add("card--hidden");
             card.classList.remove('card--expanded');
-            if (flkty) flkty.destroy();
+
+            document.querySelector('.card-footer').classList.add("hide");
+            document.querySelector('.card-footer').classList.remove("show");
+
             destroySiema();
             lastClickedLayerID = currentID;
             resetStyle(currentID);
@@ -195,11 +198,9 @@
             event.stopPropagation();
         });
 
-        var nextBtn = document.getElementById('nextBtn');
-        nextBtn.addEventListener('click', function (event) {
+        document.getElementById('nextBtn').addEventListener('click', function (event) {
             event.preventDefault();
             lastClickedLayerID = currentID;
-            if (flkty) flkty.destroy();
             destroySiema();
             if (currentID < 27) popByID(currentID + 1);
             else popByID(1);
@@ -207,11 +208,9 @@
             event.stopPropagation();
         })
 
-        var prevBtn = document.getElementById('prevBtn');
-        prevBtn.addEventListener('click', function (event) {
+        document.getElementById('prevBtn').addEventListener('click', function (event) {
             event.preventDefault();
             lastClickedLayerID = currentID;
-            if (flkty) flkty.destroy();
             destroySiema();
             if (currentID > 1) popByID(currentID - 1);
             else popByID(27);
@@ -284,9 +283,12 @@
                     }
 
                     resetStyle(lastClickedLayerID);
-                    changeState(int_ID);
+                    
                     createPopup(element);
                     zoomToPolygon(id);
+
+                    var stateObj = { playground_id: currentID };
+                    window.history.pushState(stateObj, "", `#${entrySource}&id=${currentID}`);
                     console.log("lastClickedLayerID: " + lastClickedLayerID + " | currentID: " + currentID);
                 }
             });
@@ -313,14 +315,7 @@
             }
         }
 
-        function changeState(e) {
-            currentID = e;
-            console.log("current ID: " + currentID);
 
-            // Change URL onClick
-            var stateObj = { playground_id: currentID };
-            window.history.pushState(stateObj, "", `#${entrySource}&id=${currentID}`);
-        }
 
         function zoomToPolygon(id) {
             var parseID;
@@ -340,9 +335,6 @@
             console.log(parseID);
             pgmap.fitBounds(layers[parseID].feature.properties.cal_bound, { padding: [50, 50] });
         }
-
-
-
 
         function createPopup(element) {
             var prop = element.properties;
@@ -365,7 +357,8 @@
 
             document.getElementById("cardDetail").innerHTML = content;
             document.querySelector(".remarks").innerHTML = prop["remarks"];
-
+            document.getElementById("article").textContent = "會員人數有水份？前往文章 ⟶";
+            document.getElementById("article").setAttribute("href", prop["article"]);
             // if (prop['infogram']) {
             //     document.getElementById("infogram").innerHTML = prop['infogram'];
             //     !function (e, t, n, s) { var i = "InfogramEmbeds", o = e.getElementsByTagName(t)[0], d = /^http:/.test(e.location) ? "http:" : "https:"; if (/^\/{2}/.test(s) && (s = d + s), window[i] && window[i].initialized) window[i].process && window[i].process(); else if (!e.getElementById(n)) { var a = e.createElement(t); a.async = 1, a.id = n, a.src = s, o.parentNode.insertBefore(a, o) } }(document, "script", "infogram-async", "https://e.infogram.com/js/dist/embed-loader-min.js");
@@ -373,27 +366,28 @@
             initSiema(parseInt(element.properties.id));
             card.classList.remove("card--hidden");
 
+            document.querySelector('.card-footer').classList.add("show");
+            document.querySelector('.card-footer').classList.remove("hide");
+
         }
 
         var siemaDiv = document.querySelector(".siema");
 
-
         function destroySiema() {
-            mySiema.destroy(false, () => {
+            if (typeof(mySiema)) {
+                mySiema.destroy(false, () => {
                 while (siemaDiv.firstChild) {
                     siemaDiv.removeChild(siemaDiv.firstChild);
                 }
                 console.log('Destroy it bro 💣 💣 💣');
             })
+            }
         }
 
         function initSiema(id) {
             var imgs = pgContents.find(function (element) {
                 return element.id == id;
             });
-
-            console.log(imgs);
-            var siemaDiv = document.querySelector(".siema");
 
             imgs.images.forEach(image => {
                 console.log(image);
@@ -404,13 +398,12 @@
                 siemaDiv.append(img);
             })
             mySiema = new Siema({
+                loop: true,
                 onInit: printSlideIndex,
                 onChange: printSlideIndex
             });
         }
 
-
-        
 
         function printSlideIndex() {
             var imgs = pgContents.find(function (element) {
@@ -423,6 +416,9 @@
             credit.className = 'credit';
             credit.textContent = imgs.images[parseInt(this.currentSlide % imageTotal)].credit;
             caption.appendChild(credit);
+
+            var stateObj = { playground_id: currentID };
+                    window.history.pushState(stateObj, "", `#${entrySource}&id=${currentID}&img=${this.currentSlide}`);
         }
 
         function onMapClick(e) {
