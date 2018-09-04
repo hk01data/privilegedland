@@ -30,19 +30,17 @@ body {
     opacity: 1;
     border-top-left-radius: 8px !important;
     border-top-right-radius: 8px !important;
-    border-bottom-left-radius: 8px !important;
-    border-bottom-right-radius: 8px !important;
+    /* border-bottom-left-radius: 8px !important;
+    border-bottom-right-radius: 8px !important; */
     line-height: 1.8rem;
 }
-
-
 
 
 
 @media only screen and (max-width: 835px) {
     .card--mobile {
         top: 37.5%;
-        height: 70%;
+        height: calc(62.5% - 50px);
         left: 0;
         right: 0;
         -webkit-transition: all .2s ease-in-out,top .2s ease-out; 
@@ -51,7 +49,7 @@ body {
 
     .card--expanded:not(.card--hidden) {
         top: 0%;
-        height: 100%;
+        height: calc(100% - 50px);
     }
 
     .card--hidden {
@@ -145,8 +143,8 @@ body {
 } */
 
 .card-body {
-    height: auto;
-    max-height: 100vh;
+    /* height: auto; */
+    /* max-height: 100vh; */
     overflow-y: auto;
     /* max-height: calc(100vh - 220px); */
     background: url(../images/hk01watermark.png);
@@ -155,12 +153,6 @@ body {
     /* padding: 0 1.25rem 1rem !important; */
     padding: 0 !important;
 }
-
-
-
-
-
-
 
 
 .card #cardType {

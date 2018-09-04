@@ -28,6 +28,7 @@
     <script src="src/pgContents.js"></script>
     <script src="src/markers.js"></script>
     <script src="src/siema.min.js"></script>
+    <!-- <link rel="stylesheet" href="src/basicLightbox.min.css"> -->
 
 
 
@@ -35,6 +36,7 @@
 
 <body>
     <div id='mapid'></div>
+
     
     <div class="card card--mobile card--hidden">
         <div class="card-header">
@@ -48,6 +50,7 @@
             <button type="button" class="close" id="prevBtn" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">＜</span>
             </button>
+            
         </div>
         <div class="card-body">
             <span class="card-title" id="cardName"></span>
@@ -58,15 +61,16 @@
                 </div>
                 <div class="siema"></div>
             </div>
-                <p class="caption"></p>&nbsp;<span class="credit"></span>
-            
+            <p class="caption"></p>&nbsp;
+
             <div class="container">
                 <ul class="fa-ul" id="cardDetail"></ul>
                 <p class="remarks"></p>
             </div>
             <div id="infogram"> </div>
+            <div class="card-footer hide"><a id="article" href="" target="_blank"></a></div>
         </div>
-        <div class="card-footer hide"><a id="article" href="" target="_blank"></a></div>
+        
     </div>
 
 
@@ -245,13 +249,13 @@
             }
 
 
-            layers[feature.properties.id].feature.properties.mobileBound = [[bbox.getSouth() - (bbox.getNorth() - bbox.getSouth()) * 2.5, bbox.getWest()],[bbox.getNorth(), bbox.getEast()]];
-            
-        
+            layers[feature.properties.id].feature.properties.mobileBound = [[bbox.getSouth() - (bbox.getNorth() - bbox.getSouth()) * 2.5, bbox.getWest()], [bbox.getNorth(), bbox.getEast()]];
 
-            layers[feature.properties.id].feature.properties.desktopBound = 
-            [[bbox.getSouth(), bbox.getWest() - (bbox.getEast() - bbox.getWest())] , [bbox.getNorth(), bbox.getEast()]];
-        
+
+
+            layers[feature.properties.id].feature.properties.desktopBound =
+                [[bbox.getSouth(), bbox.getWest() - (bbox.getEast() - bbox.getWest())], [bbox.getNorth(), bbox.getEast()]];
+
 
             layer.on('click', function (e) {
                 popByClick(e);
@@ -289,7 +293,7 @@
                     }
 
                     resetStyle(lastClickedLayerID);
-                    
+
                     createPopup(element);
                     zoomToPolygon(id);
 
@@ -340,11 +344,11 @@
             }
             console.log(parseID);
             if (screen.width < 835) {
-                pgmap.fitBounds(layers[parseID].feature.properties.mobileBound, { padding: [50, 50]});
+                pgmap.fitBounds(layers[parseID].feature.properties.mobileBound, { padding: [50, 50] });
             } else {
-                pgmap.fitBounds(layers[parseID].feature.properties.desktopBound, { padding: [50, 50]});
+                pgmap.fitBounds(layers[parseID].feature.properties.desktopBound, { padding: [50, 50] });
             }
-            
+
         }
 
         function createPopup(element) {
@@ -385,13 +389,13 @@
         var siemaDiv = document.querySelector(".siema");
 
         function destroySiema() {
-            if (typeof(mySiema)) {
+            if (typeof (mySiema)) {
                 mySiema.destroy(false, () => {
-                while (siemaDiv.firstChild) {
-                    siemaDiv.removeChild(siemaDiv.firstChild);
-                }
-                console.log('Destroy it bro 💣 💣 💣');
-            })
+                    while (siemaDiv.firstChild) {
+                        siemaDiv.removeChild(siemaDiv.firstChild);
+                    }
+                    console.log('Destroy it bro 💣 💣 💣');
+                })
             }
         }
 
@@ -399,12 +403,15 @@
             var imgs = pgContents.find(function (element) {
                 return element.id == id;
             });
-
+            
+            var i = 0;
             imgs.images.forEach(image => {
                 console.log(image);
                 var img = document.createElement("img");
                 img.setAttribute("src", "images/playgrounds/" + image.src);
                 img.setAttribute("alt", image.alt);
+                // img.setAttribute("data-show-id", i);
+                i++;
                 siemaDiv.appendChild(img);
                 siemaDiv.append(img);
             })
@@ -429,7 +436,7 @@
             caption.appendChild(credit);
 
             var stateObj = { playground_id: currentID };
-                    window.history.pushState(stateObj, "", `#${entrySource}&id=${currentID}&img=${this.currentSlide}`);
+            window.history.pushState(stateObj, "", `#${entrySource}&id=${currentID}&img=${this.currentSlide}`);
         }
 
         // function onMapClick(e) {
@@ -476,9 +483,19 @@
         }
 
 
+        // const getTargetHTML = function (elem) {
+        //     const id = elem.getAttribute('data-show-id')
+        //     const target = document.querySelector(`[data-id="${id}"]`)
+        //     return target.outerHTML
+        // }
+
+        // document.querySelectorAll('[data-show-id]').forEach(function (elem) {
+        //     const html = getTargetHTML(elem)
+        //     elem.onclick = basicLightbox.create(html).show
+        // })
 
     </script>
-
+    <!-- <script src="src/basicLightbox.min.js"></script> -->
 </body>
 
 </html>
