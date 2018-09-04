@@ -193,8 +193,10 @@
         closeCard.addEventListener('click', (event) => {
             card.classList.add("card--hidden");
             card.classList.remove('card--expanded');
+            lastClickedLayerID = currentID;
             resetStyle(currentID);
             currentID = 0;
+            console.log("lastClickedLayerID: " + lastClickedLayerID + " | currentID: " + currentID);
             event.stopPropagation();
         });
 
@@ -242,14 +244,13 @@
 
         function popByClick(e) {
             if (parseInt(e.target.feature.properties.id) != currentID) {
-                if (initialID != -1) lastClickedLayerID = currentID;
-                currentID = parseInt(e.target.feature.properties.id);
                 popByID(e.target.feature.properties.id);
-                console.log("lastClickedLayerID: " + lastClickedLayerID + " | currentID: " + currentID);
             }
         }
 
         function popByID(id) {
+            if (initialID != -1) lastClickedLayerID = currentID;
+            currentID = parseInt(id);
             int_ID = parseInt(id);
             playgrounds.find(function (element) {
                 if (parseInt(element.properties.id) == int_ID) {
@@ -275,12 +276,13 @@
                     changeState(int_ID);
                     createPopup(element);
                     zoomToPolygon(id);
+                    console.log("lastClickedLayerID: " + lastClickedLayerID + " | currentID: " + currentID);
                 }
             });
         }
 
         function resetStyle(id) {
-            if (lastClickedLayerID != -1) {
+            if (lastClickedLayerID > 0) {
                 switch (id) {
                     case 2:
                         playground_layer.resetStyle(layers[2.1]);
@@ -437,7 +439,7 @@
                 mySiema.next();
                 e.stopPropagation();
             });
-            
+
         function printSlideIndex() {
             let imageTotal = pgContents[0].images.length;
             var caption = document.querySelector('.caption');
