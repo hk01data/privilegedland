@@ -26,7 +26,13 @@
         <div><img src="https://pawelgrzybek.com/siema/assets/siema--yellow.svg" alt="Siema image" /></div>
         <div><img src="https://pawelgrzybek.com/siema/assets/siema--pink.svg" alt="Siema image" /></div>
         <div><img src="https://pawelgrzybek.com/siema/assets/siema--yellow.svg" alt="Siema image" /></div>
-        <div><img src="https://pawelgrzybek.com/siema/assets/siema--yellow.svg" alt="Siema image" /></div>    
+        <div><img src="https://pawelgrzybek.com/siema/assets/siema--yellow.svg" alt="Siema image" /></div>
+        <div><img src="https://pawelgrzybek.com/siema/assets/siema--yellow.svg" alt="Siema image" /></div>
+        <div><img src="https://pawelgrzybek.com/siema/assets/siema--yellow.svg" alt="Siema image" /></div> 
+        <div><img src="https://pawelgrzybek.com/siema/assets/siema--yellow.svg" alt="Siema image" /></div>
+        <div><img src="https://pawelgrzybek.com/siema/assets/siema--yellow.svg" alt="Siema image" /></div> 
+        <div><img src="https://pawelgrzybek.com/siema/assets/siema--yellow.svg" alt="Siema image" /></div>
+        <div><img src="https://pawelgrzybek.com/siema/assets/siema--yellow.svg" alt="Siema image" /></div>     
     </div>
 
     <button class="destroy">Destroy (keep the markup)</button>
@@ -80,13 +86,9 @@
 
     destroy.addEventListener('click', () => {
         console.log('Destroy it bro 💣 💣 💣');
-        // var siemaDiv = document.querySelector(".siema");
-        // while (siemaDiv.firstChild) {
-        //     mySiema.remove(0);
-        // }
-        for (var i = 4; i>=0; i--) {
-        mySiema.remove(i);
-    }
+        for (let i = 0, n = document.querySelector(".siema div").childElementCount; i < n; i++) {
+            mySiema.remove(0);
+        }
     }
     );
 
