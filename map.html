@@ -26,17 +26,16 @@
     <link rel="stylesheet" href="src/custom.css">
     <script src="src/playgrounds.js"></script>
     <script src="src/pgContents.js"></script>
+    <script src="src/markers.js"></script>
     <script src="src/siema.min.js"></script>
-    <link rel="stylesheet" href="https://unpkg.com/flickity@2/dist/flickity.min.css">
-    <script src="https://unpkg.com/flickity@2/dist/flickity.pkgd.min.js"></script>
 
 
 
 </head>
 
 <body>
-
     <div id='mapid'></div>
+    
     <div class="card card--mobile card--hidden">
         <div class="card-header">
             <span id="cardType"></span>
@@ -67,7 +66,7 @@
             </div>
             <div id="infogram"> </div>
         </div>
-        <div class="card-footer hide"><a id="article" href="" target="_blank">前往文章 ⟶</a></div>
+        <div class="card-footer hide"><a id="article" href="" target="_blank"></a></div>
     </div>
 
 
@@ -244,8 +243,15 @@
                 default:
                     bbox = layer.getBounds();
             }
-            var cal_box = bbox.extend([bbox.getSouth() - (bbox.getNorth() - bbox.getSouth()) * 2.5, bbox.getEast()]);
-            layers[feature.properties.id].feature.properties.cal_bound = cal_box;
+
+
+            layers[feature.properties.id].feature.properties.mobileBound = [[bbox.getSouth() - (bbox.getNorth() - bbox.getSouth()) * 2.5, bbox.getWest()],[bbox.getNorth(), bbox.getEast()]];
+            
+        
+
+            layers[feature.properties.id].feature.properties.desktopBound = 
+            [[bbox.getSouth(), bbox.getWest() - (bbox.getEast() - bbox.getWest())] , [bbox.getNorth(), bbox.getEast()]];
+        
 
             layer.on('click', function (e) {
                 popByClick(e);
@@ -333,7 +339,12 @@
                     parseID = id;
             }
             console.log(parseID);
-            pgmap.fitBounds(layers[parseID].feature.properties.cal_bound, { padding: [50, 50] });
+            if (screen.width < 835) {
+                pgmap.fitBounds(layers[parseID].feature.properties.mobileBound, { padding: [50, 50]});
+            } else {
+                pgmap.fitBounds(layers[parseID].feature.properties.desktopBound, { padding: [50, 50]});
+            }
+            
         }
 
         function createPopup(element) {
@@ -357,7 +368,7 @@
 
             document.getElementById("cardDetail").innerHTML = content;
             document.querySelector(".remarks").innerHTML = prop["remarks"];
-            document.getElementById("article").textContent = "會員人數有水份？前往文章 ⟶";
+            document.getElementById("article").textContent = prop["article_text"];
             document.getElementById("article").setAttribute("href", prop["article"]);
             // if (prop['infogram']) {
             //     document.getElementById("infogram").innerHTML = prop['infogram'];
@@ -421,58 +432,20 @@
                     window.history.pushState(stateObj, "", `#${entrySource}&id=${currentID}&img=${this.currentSlide}`);
         }
 
-        function onMapClick(e) {
-            pgmap.fitBounds([[22.271194, 114.178092], [22.286079, 114.192911]], { padding: [50, 50] });
-        }
-
-        var serachMarkers = {
-            "type": "FeatureCollection",
-            "features": [
-                {
-                    "type": "Feature",
-                    "properties": {
-                        "bound": [[22.271194, 114.178092], [22.286079, 114.192911]],
-                        "icon": "searchMkr1",
-                        "marker-size": "medium",
-                        "marker-symbol": ""
-                    },
-                    "geometry": {
-                        "type": "Point",
-                        "coordinates": [
-                            114.180181,
-                            22.262056
-                        ]
-                    }
-                },
-                {
-                    "type": "Feature",
-                    "properties": {
-                        "bound": [[22.302329, 114.172774], [22.310514, 114.179198]],
-                        "icon": "searchMkr1",
-                        "marker-size": "medium",
-                        "marker-symbol": ""
-                    },
-                    "geometry": {
-                        "type": "Point",
-                        "coordinates": [
-                            114.175392,
-                            22.312573,
-                        ]
-                    }
-                }
-            ]
-        }
+        // function onMapClick(e) {
+        //     pgmap.fitBounds([[22.271194, 114.178092], [22.286079, 114.192911]], { padding: [50, 50] });
+        // }
 
         var searchMkr1 = L.icon({
             iconUrl: 'images/searchMarker.png',
-            iconSize: [48, 48],
-            iconAnchor: [24, 24]
+            iconSize: [30, 30],
+            iconAnchor: [15, 15]
         });
 
 
         var searchMkr_layer = new L.FeatureGroup();
 
-        L.geoJSON(serachMarkers, {
+        L.geoJSON(markers, {
             pointToLayer: function (geoJsonPoint, latlng) {
                 return L.marker(latlng, { icon: searchMkr1 })
             },
@@ -483,7 +456,8 @@
 
         function searchZoom(feature, layer) {
             layer.on('click', function (e) {
-                pgmap.fitBounds(feature.properties.bound, { padding: [50, 50] });
+                var latLngs = e.target.getLatLng();
+                pgmap.setView(latLngs, 15);
             })
         }
 

@@ -696,7 +696,7 @@ var playgrounds = [
    "properties": {
       "id": 6,
       "chi_name": "菲律賓會",
-      "type": "港島",
+      "type": "九龍",
       "area": 30343.7,
       "members": 140,
       "avg_usage": "49%",
@@ -1512,7 +1512,8 @@ var playgrounds = [
       "due_date": "2020年8月31日",
       "remarks": "",
       "infogram" : '<div class="infogram-embed" data-id="0db5cb32-3e21-4af3-887c-c266880e1e86" data-type="interactive" data-title="私人遊樂場地契約-會員人均使用土地"></div>',
-      "article" : "https://www.hk01.com/社會新聞/161649"
+      "article" : "https://www.hk01.com/社會新聞/161649",
+      "article_text": "會員人數有水份？前往文章 ⟶"
    },
    "geometry": {
       "type": "Polygon",
@@ -3219,7 +3220,7 @@ var playgrounds = [
    "properties": {
       "id": 22,
       "chi_name": "巴基斯坦協會",
-      "type": "港島",
+      "type": "九龍",
       "area": 24068.3,
       "members": 1220,
       "avg_usage": "25%",
