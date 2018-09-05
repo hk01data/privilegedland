@@ -36,8 +36,12 @@ body {
 }
 
 
+.hide {
+    display: none;
+}
 
-@media only screen and (max-width: 835px) {
+
+@media only screen and (max-width: 708px) {
     .card--mobile {
         top: 37.5%;
         height: calc(62.5% - 49px);
@@ -56,6 +60,11 @@ body {
         height: calc(100% - 50px);
     }
 
+    .card--expanded:not(.card--hidden).full-height {
+        top: 0%;
+        height: 100%;
+    }
+
     .card--hidden {
         top: 100%;
         -webkit-transition: all .2s ease-in-out,top .2s ease-out; 
@@ -70,17 +79,57 @@ body {
         bottom:0%;
         z-index: 5020;
     }
+
+    .card #cardName {
+        display: block;
+        margin: 0.6rem 0 0.6rem 1.25rem;
+        font-weight: 500;
+        font-size: 1.3rem
+
+    }
 }
 
-.show {
-    display: block;
+
+@media only screen and (min-width: 708px) and (max-width: 1024px) {
+    .card--mobile {
+        visibility: visible;
+        width: 42%;
+        max-width: 500px;
+        height: calc(80% - 49px);
+        top: 100px;
+        left: 10px;
+        -webkit-transition: visibility 0s 0.33s, opacity 0.33s linear;
+        transition: visibility 0s 0.33s, opacity 0.33s linear;
+        font-size: 90%;
+    }
+
+    .card #cardName {
+        display: block;
+        margin: 0.3rem 0 0.3rem 1.25rem;
+        font-weight: 500;
+        font-size: 1.2rem
+    }
+
+    .card--expanded:not(.card--hidden) {
+        top: 100px;
+    }
+
+    .card--hidden {
+        visibility: hidden;
+        -webkit-transition: visibility 0s 0.33s, opacity 0.33s linear;
+        transition: visibility 0s 0.33s, opacity 0.33s linear;
+    }
+
+    .card-footer {
+        height: 50px;
+        background-color: rgb(248, 248, 248);
+        bottom:0%;
+        z-index: 5020;
+    }
 }
 
-.hide {
-    display: none;
-}
 
-@media only screen and (min-width: 835px) {
+@media only screen and (min-width: 1024px) {
     .card--mobile {
         visibility: visible;
         width: 35%;
@@ -109,9 +158,14 @@ body {
         bottom:0%;
         z-index: 5020;
     }
+
+    .card #cardName {
+        display: block;
+        margin: 0.3rem 0 0.3rem 1.25rem;
+        font-weight: 500;
+        font-size: 1.2rem
+    }
 }
-
-
 
 
 
@@ -185,12 +239,7 @@ body {
     background: rgb(250, 133, 112);
 }
 
-.card #cardName {
-    display: block;
-    margin: 0.6rem 0 0.6rem 1.25rem;
-    font-size: 1.3rem;
-    font-weight: 500;
-}
+
 
 .card .fas {
     margin-right: 1rem;

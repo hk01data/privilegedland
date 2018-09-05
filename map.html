@@ -133,7 +133,7 @@
         function initMap(entryPoint, initialID) {
             console.log(entryPoint + " | initialID: " + initialID);
             var map_options = {
-                center: (matchMedia('screen and (max-width: 835px)').matches) ? [22.372809, 114.1660907] : [22.372809, 114.120322],
+                center: (matchMedia('screen and (max-width: 708px)').matches) ? [22.372809, 114.1660907] : [22.372809, 114.120322],
                 zoom: 11, 
                 zoomSnap: 0,
                 zoomDelta: 1,
@@ -356,7 +356,7 @@
                 duration: 0.5,
                 easeLinearity: 0.1
             }
-            if (matchMedia('screen and (max-width: 835px)').matches) {
+            if (matchMedia('screen and (max-width: 708px)').matches) {
                 pgmap.fitBounds(layers[parseID].feature.properties.mobileBound, options);
             } else {
                 pgmap.fitBounds(layers[parseID].feature.properties.desktopBound, options);
@@ -449,7 +449,7 @@
                 adaptiveHeight: true,
                 fullscreen: true
             };
-            if (matchMedia('screen and (max-width: 835px)').matches) {
+            if (matchMedia('screen and (max-width: 708px)').matches) {
                 options.fullscreen = false;
             }
             flkty = new Flickity(flktyElem, options);
