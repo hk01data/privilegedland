@@ -40,11 +40,15 @@ body {
 @media only screen and (max-width: 835px) {
     .card--mobile {
         top: 37.5%;
-        height: calc(62.5% - 50px);
+        height: calc(62.5% - 49px);
         left: 0;
         right: 0;
         -webkit-transition: all .2s ease-in-out,top .2s ease-out; 
         transition: all .2s ease-in-out,top .2s ease-out;
+    }
+
+    .full-height {
+        height: 62.5%;
     }
 
     .card--expanded:not(.card--hidden) {
@@ -69,11 +73,11 @@ body {
 }
 
 .show {
-    visibility: visible;
+    display: block;
 }
 
 .hide {
-    visibility: hidden;
+    display: none;
 }
 
 @media only screen and (min-width: 835px) {
@@ -81,11 +85,12 @@ body {
         visibility: visible;
         width: 35%;
         max-width: 500px;
-        max-height: 80%;
+        height: calc(80% - 49px);
         top: 100px;
         left: 10px;
         -webkit-transition: visibility 0s 0.33s, opacity 0.33s linear;
         transition: visibility 0s 0.33s, opacity 0.33s linear;
+        
     }
 
     .card--expanded:not(.card--hidden) {
@@ -96,6 +101,13 @@ body {
         visibility: hidden;
         -webkit-transition: visibility 0s 0.33s, opacity 0.33s linear;
         transition: visibility 0s 0.33s, opacity 0.33s linear;
+    }
+
+    .card-footer {
+        height: 50px;
+        background-color: rgb(248, 248, 248);
+        bottom:0%;
+        z-index: 5020;
     }
 }
 
@@ -143,14 +155,10 @@ body {
 } */
 
 .card-body {
-    /* height: auto; */
-    /* max-height: 100vh; */
     overflow-y: auto;
-    /* max-height: calc(100vh - 220px); */
     background: url(../images/hk01watermark.png);
     background-repeat: no-repeat;
     background-position: center;
-    /* padding: 0 1.25rem 1rem !important; */
     padding: 0 !important;
 }
 
@@ -193,10 +201,6 @@ body {
     margin-bottom: 0;
 }
 
-.siema img{
-    width: 100%;
-}
-
 .card .remarks {
     font-size: 90%;
     margin-top:5px;
@@ -204,10 +208,8 @@ body {
 
 
 .caption {
-    ackground: #FAFAFA;
     display: inline-block;
-    margin: 5px;
-    padding: 0.5rem;
+    margin: 0.2rem 0.5rem 0;
     font-size: 0.9rem;
     line-height: 1rem;
 }
@@ -216,17 +218,6 @@ body {
     display: inline-block;
     font-size: 0.9rem;
     color: #666;
-}
-
-#siema_container {
-    position: relative;
-}
-.siema_control {
-
-    width: 100%;
-    position: absolute;
-    z-index: 1;
-    bottom: 50%;
 }
 
 #prev {
@@ -238,3 +229,40 @@ body {
     position: absolute;
     right: 2%;
 }
+
+.carousel-cell {
+    width: 100%; /* full width */
+    /* height: 200px; height of carousel */
+  }
+
+.carousel-cell img {
+    display: block;
+    width: 100%;
+}
+
+.is-fullscreen {
+    
+}
+
+.flickity-prev-next-button {
+    width: 30px !important;
+    height: 30px !important;
+    border-radius: 5px !important;
+    background: #333 !important;
+  }
+
+.flickity-prev-next-button:hover {
+    background: #F90 !important;
+}
+
+.flickity-prev-next-button .arrow {
+    fill: white !important;
+  }
+
+/* smaller, dark, rounded square */
+.flickity-button {
+    background: #333;
+  }
+  .flickity-button:hover {
+    background: #F90;
+  }

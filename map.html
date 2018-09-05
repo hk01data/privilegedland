@@ -27,8 +27,10 @@
     <script src="src/playgrounds.js"></script>
     <script src="src/pgContents.js"></script>
     <script src="src/markers.js"></script>
-    <script src="src/siema.min.js"></script>
-    <!-- <link rel="stylesheet" href="src/basicLightbox.min.css"> -->
+    <script src="src/flickity.js"></script>
+    <link rel="stylesheet" href="src/flickity.css" media="screen">
+    <script src="src/fullscreen.js"></script>
+    <link rel="stylesheet" href="src/fullscreen.css" media="screen">
 
 
 
@@ -37,7 +39,7 @@
 <body>
     <div id='mapid'></div>
 
-    
+
     <div class="card card--mobile card--hidden">
         <div class="card-header">
             <span id="cardType"></span>
@@ -50,27 +52,20 @@
             <button type="button" class="close" id="prevBtn" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">＜</span>
             </button>
-            
+    
         </div>
+        <span class="card-title" id="cardName"></span>
         <div class="card-body">
-            <span class="card-title" id="cardName"></span>
-            <div id="siema_container">
-                <div class="siema_control">
-                    <button id="prev" class="btn btn-light btn-sm">&#9668;</button>
-                    <button id="next" class="btn btn-light btn-sm">&#9658;</button>
-                </div>
-                <div class="siema"></div>
-            </div>
-            <p class="caption"></p>&nbsp;
-
+            
+            <div class="main-carousel"></div>
+            <p class="caption"></p>
             <div class="container">
                 <ul class="fa-ul" id="cardDetail"></ul>
                 <p class="remarks"></p>
             </div>
             <div id="infogram"> </div>
-            <div class="card-footer hide"><a id="article" href="" target="_blank"></a></div>
         </div>
-        
+        <div class="card-footer hide"><a id="article" href="" target="_blank"></a></div>
     </div>
 
 
@@ -82,8 +77,8 @@
         var currentID = -1;
         var lastClickedLayerID = -1;
         var playground_layer;
-
-        var mySiema;
+        var flkty;
+        var lastView;
 
         var shape_blue = {
             'color': '#0017c7',
@@ -138,8 +133,8 @@
         function initMap(entryPoint, initialID) {
             console.log(entryPoint + " | initialID: " + initialID);
             var map_options = {
-                center: (screen.width >= 768) ? [22.372809, 114.120322] : [22.372809, 114.1660907],
-                zoom: 11, //(screen.width >= 768) ? 11 : 11,
+                center: (matchMedia('screen and (max-width: 835px)').matches) ? [22.372809, 114.1660907] : [22.372809, 114.120322],
+                zoom: 11, 
                 zoomSnap: 0,
                 zoomDelta: 1,
                 wheelPxPerZoomLevel: 40,
@@ -166,6 +161,11 @@
             var overlayMaps = {
                 "用地": playground_layer
             };
+
+            lastView = {
+                        center: pgmap.getCenter(),
+                        zoom: pgmap.getZoom()
+                };
         }
 
 
@@ -173,6 +173,7 @@
         var card = document.querySelector('.card--mobile');
         var card_header = document.querySelector('.card-header');
         var card_title = document.querySelector('.card-title');
+        var card_footer = document.querySelector('.card-footer');
 
         card_header.addEventListener('click', (event) => {
             card.classList.toggle('card--expanded');
@@ -184,27 +185,32 @@
             event.stopPropagation();
         });
 
+        function restoreCard() {
+            lastClickedLayerID = currentID;
+            card_footer.classList.add("hide");
+            card_footer.classList.remove("show");
+            document.querySelector(".card--mobile").classList.add("full-height");
+            destroyFlkty();
+            resetStyle(currentID);
+        }
+
         var closeCard = document.querySelector('#close-card');
         closeCard.addEventListener('click', (event) => {
             card.classList.add("card--hidden");
             card.classList.remove('card--expanded');
+            restoreCard();
 
-            document.querySelector('.card-footer').classList.add("hide");
-            document.querySelector('.card-footer').classList.remove("show");
-
-            destroySiema();
-            lastClickedLayerID = currentID;
-            resetStyle(currentID);
             currentID = 0;
-            console.log("lastClickedLayerID: " + lastClickedLayerID + " | currentID: " + currentID);
+            
+
+            pgmap.setView(lastView.center, lastView.zoom);
 
             event.stopPropagation();
         });
 
         document.getElementById('nextBtn').addEventListener('click', function (event) {
             event.preventDefault();
-            lastClickedLayerID = currentID;
-            destroySiema();
+            restoreCard();
             if (currentID < 27) popByID(currentID + 1);
             else popByID(1);
 
@@ -213,35 +219,36 @@
 
         document.getElementById('prevBtn').addEventListener('click', function (event) {
             event.preventDefault();
-            lastClickedLayerID = currentID;
-            destroySiema();
+            restoreCard();
             if (currentID > 1) popByID(currentID - 1);
             else popByID(27);
 
             event.stopPropagation();
         })
 
-        document.getElementById('prev').addEventListener('click', (e) => {
-            mySiema.prev();
-            e.stopPropagation();
-        });
-
-        document.getElementById('next').addEventListener('click', (e) => {
-            mySiema.next();
-            e.stopPropagation();
-        });
-
         function loopLayer(feature, layer) {
             layers[feature.properties.id] = layer;
             var bbox;
             switch (parseInt(feature.properties.id)) {
-                case 2:
+                // re-position polygons
+                case 6:
+                    bbox = L.latLngBounds([22.363624, 114.259365], [22.366194, 114.262337]);
+                    break;
+                case 9:
+                    bbox = L.latLngBounds([22.331746, 114.179553], [22.333145, 114.181066]);
+                    break;
+                case 15:
+                    bbox = L.latLngBounds([22.302924, 114.173871], [22.304632, 114.175406]);
+                    break;
+
+                // multiple polygons
+                case 18:
                     bbox = L.latLngBounds([22.278790, 114.190460], [22.280482, 114.192329]);
                     break;
-                case 10:
+                case 20:
                     bbox = L.latLngBounds([22.273413, 114.180323], [22.275704, 114.183000]);
                     break;
-                case 17:
+                case 22:
                     bbox = L.latLngBounds([22.267781, 114.190859], [22.269909, 114.193376]);
                     break;
                 default:
@@ -272,52 +279,52 @@
             if (initialID != -1) lastClickedLayerID = currentID;
             currentID = parseInt(id);
             int_ID = parseInt(id);
-            playgrounds.find(function (element) {
-                if (parseInt(element.properties.id) == int_ID) {
+            elem = playgrounds.find(function (element) {
+                return parseInt(element.properties.id) == int_ID;
+            });
+            // if (parseInt(element.properties.id) == int_ID) {
                     switch (int_ID) {
-                        case 2:
-                            layers[2.1].setStyle(shape_red);
-                            layers[2.2].setStyle(shape_red);
+                        case 18:
+                            layers[18.1].setStyle(shape_red);
+                            layers[18.2].setStyle(shape_red);
                             break;
-                        case 10:
-                            layers[10.1].setStyle(shape_red);
-                            layers[10.2].setStyle(shape_red);
+                        case 20:
+                            layers[20.1].setStyle(shape_red);
+                            layers[20.2].setStyle(shape_red);
                             break;
 
-                        case 17:
-                            layers[17.1].setStyle(shape_red);
-                            layers[17.2].setStyle(shape_red);
+                        case 22:
+                            layers[22.1].setStyle(shape_red);
+                            layers[22.2].setStyle(shape_red);
                             break;
                         default:
                             layers[int_ID].setStyle(shape_red);
                     }
-
                     resetStyle(lastClickedLayerID);
 
-                    createPopup(element);
+                    createPopup(elem);
                     zoomToPolygon(id);
-
+                    
                     var stateObj = { playground_id: currentID };
                     window.history.pushState(stateObj, "", `#${entrySource}&id=${currentID}`);
                     console.log("lastClickedLayerID: " + lastClickedLayerID + " | currentID: " + currentID);
-                }
-            });
+                // }
         }
 
         function resetStyle(id) {
             if (lastClickedLayerID > 0) {
                 switch (id) {
-                    case 2:
-                        playground_layer.resetStyle(layers[2.1]);
-                        playground_layer.resetStyle(layers[2.2]);
+                    case 18:
+                        playground_layer.resetStyle(layers[18.1]);
+                        playground_layer.resetStyle(layers[18.2]);
                         break;
-                    case 10:
-                        playground_layer.resetStyle(layers[10.1]);
-                        playground_layer.resetStyle(layers[10.2]);
+                    case 20:
+                        playground_layer.resetStyle(layers[20.1]);
+                        playground_layer.resetStyle(layers[20.2]);
                         break;
-                    case 17:
-                        playground_layer.resetStyle(layers[17.1]);
-                        playground_layer.resetStyle(layers[17.2]);
+                    case 22:
+                        playground_layer.resetStyle(layers[22.1]);
+                        playground_layer.resetStyle(layers[22.2]);
                         break;
                     default:
                         playground_layer.resetStyle(layers[id]);
@@ -330,23 +337,29 @@
         function zoomToPolygon(id) {
             var parseID;
             switch (id) {
-                case 2:
-                    parseID = 2.1;
+                case 18:
+                    parseID = 18.1;
                     break;
-                case 10:
-                    parseID = 10.1;
+                case 20:
+                    parseID = 20.1;
                     break;
-                case 17:
-                    parseID = 17.1;
+                case 22:
+                    parseID = 22.1;
                     break;
                 default:
                     parseID = id;
             }
-            console.log(parseID);
-            if (screen.width < 835) {
-                pgmap.fitBounds(layers[parseID].feature.properties.mobileBound, { padding: [50, 50] });
+
+            var options = {
+                padding: [50, 50], 
+                animate: true,
+                duration: 0.5,
+                easeLinearity: 0.1
+            }
+            if (matchMedia('screen and (max-width: 835px)').matches) {
+                pgmap.fitBounds(layers[parseID].feature.properties.mobileBound, options);
             } else {
-                pgmap.fitBounds(layers[parseID].feature.properties.desktopBound, { padding: [50, 50] });
+                pgmap.fitBounds(layers[parseID].feature.properties.desktopBound, options);
             }
 
         }
@@ -372,71 +385,92 @@
 
             document.getElementById("cardDetail").innerHTML = content;
             document.querySelector(".remarks").innerHTML = prop["remarks"];
-            document.getElementById("article").textContent = prop["article_text"];
-            document.getElementById("article").setAttribute("href", prop["article"]);
+
+            if (prop["article"]) {
+                document.getElementById("article").textContent = prop["article_text"];
+                document.getElementById("article").setAttribute("href", prop["article"]);
+                card_footer.classList.remove("hide");
+                document.querySelector(".card--mobile").classList.remove("full-height");
+            } else {
+                document.querySelector(".card--mobile").classList.add("full-height");
+            }
+
+            
+            
             // if (prop['infogram']) {
             //     document.getElementById("infogram").innerHTML = prop['infogram'];
             //     !function (e, t, n, s) { var i = "InfogramEmbeds", o = e.getElementsByTagName(t)[0], d = /^http:/.test(e.location) ? "http:" : "https:"; if (/^\/{2}/.test(s) && (s = d + s), window[i] && window[i].initialized) window[i].process && window[i].process(); else if (!e.getElementById(n)) { var a = e.createElement(t); a.async = 1, a.id = n, a.src = s, o.parentNode.insertBefore(a, o) } }(document, "script", "infogram-async", "https://e.infogram.com/js/dist/embed-loader-min.js");
             // }
-            initSiema(parseInt(element.properties.id));
+
+            initFlkty(parseInt(element.properties.id));
             card.classList.remove("card--hidden");
 
-            document.querySelector('.card-footer').classList.add("show");
-            document.querySelector('.card-footer').classList.remove("hide");
+
 
         }
 
-        var siemaDiv = document.querySelector(".siema");
 
-        function destroySiema() {
-            if (typeof (mySiema)) {
-                mySiema.destroy(false, () => {
-                    while (siemaDiv.firstChild) {
-                        siemaDiv.removeChild(siemaDiv.firstChild);
-                    }
-                    console.log('Destroy it bro 💣 💣 💣');
-                })
+        var flktyElem = document.querySelector('.main-carousel');
+
+        function destroyFlkty() {
+            if (flkty) flkty.destroy();
+            while (flktyElem.firstChild) {
+                flktyElem.removeChild(flktyElem.firstChild);
             }
+            console.log('Destroy it bro 💣 💣 💣');
         }
 
-        function initSiema(id) {
+        function initFlkty(id) {
+
             var imgs = pgContents.find(function (element) {
                 return element.id == id;
             });
-            
-            var i = 0;
+
+
             imgs.images.forEach(image => {
-                console.log(image);
                 var img = document.createElement("img");
                 img.setAttribute("src", "images/playgrounds/" + image.src);
                 img.setAttribute("alt", image.alt);
-                // img.setAttribute("data-show-id", i);
-                i++;
-                siemaDiv.appendChild(img);
-                siemaDiv.append(img);
+                img.className = "carousel-cell";
+                // imgDiv.className = "carousel-cell";
+                // imgDiv.appendChild(img);
+                // flktyElem.appendChild(imgDiv);
+                flktyElem.appendChild(img);
             })
-            mySiema = new Siema({
-                loop: true,
-                onInit: printSlideIndex,
-                onChange: printSlideIndex
+
+
+            var options = {
+                // options
+                cellAlign: 'left',
+                contain: true,
+                pageDots: false,
+                imagesLoaded: true,
+                wrapAround: true,
+                adaptiveHeight: true,
+                fullscreen: true
+            };
+            if (matchMedia('screen and (max-width: 835px)').matches) {
+                options.fullscreen = false;
+            }
+            flkty = new Flickity(flktyElem, options);
+
+            
+
+            flkty.on('select', function () {
+                // set image caption using img's alt
+                var caption = document.querySelector('.caption');
+                caption.textContent = imgs.images[flkty.selectedIndex].alt
+                var credit = document.createElement("span");
+                credit.className = 'credit';
+                credit.textContent = imgs.images[flkty.selectedIndex].credit;
+                caption.appendChild(credit);
+                
+                var stateObj = { playground_id: currentID };
+                window.history.pushState(stateObj, "", `#${entrySource}&id=${currentID}&img=${flkty.selectedIndex}`);
             });
-        }
 
 
-        function printSlideIndex() {
-            var imgs = pgContents.find(function (element) {
-                return element.id == currentID;
-            });
-            let imageTotal = imgs.images.length;
-            var caption = document.querySelector('.caption');
-            caption.textContent = imgs.images[parseInt(this.currentSlide % imageTotal)].alt
-            var credit = document.createElement("span");
-            credit.className = 'credit';
-            credit.textContent = imgs.images[parseInt(this.currentSlide % imageTotal)].credit;
-            caption.appendChild(credit);
 
-            var stateObj = { playground_id: currentID };
-            window.history.pushState(stateObj, "", `#${entrySource}&id=${currentID}&img=${this.currentSlide}`);
         }
 
         // function onMapClick(e) {
@@ -448,7 +482,6 @@
             iconSize: [30, 30],
             iconAnchor: [15, 15]
         });
-
 
         var searchMkr_layer = new L.FeatureGroup();
 
@@ -462,13 +495,32 @@
         pgmap.addLayer(searchMkr_layer);
 
         function searchZoom(feature, layer) {
+
             layer.on('click', function (e) {
-                var latLngs = e.target.getLatLng();
-                pgmap.setView(latLngs, 15);
+                switch (e.target.feature.properties.id) {
+                    case 1:
+                    case 2:
+                    case 3:
+                    case 4:
+                    case 5:
+                    case 6:
+                    case 16:
+                    case 17:
+                    case 24:
+                    case 25:
+                    case 26:
+                    case 27:
+                        popByID(e.target.feature.properties.id);
+                        break;
+                    default:
+                        var latLngs = e.target.getLatLng();
+                        pgmap.setView(latLngs, e.target.feature.properties.zoomlvl);
+                }
+
             })
         }
 
-        pgmap.on('zoomend', function () {
+        pgmap.on('zoomend', function() {
             if (pgmap.getZoom() < 13) {
                 pgmap.addLayer(searchMkr_layer);
             }
@@ -477,25 +529,32 @@
             }
         });
 
+        pgmap.on('mouseup', function() {
+            if (currentID < 1) {
+                lastView = {
+                        center: pgmap.getCenter(),
+                        zoom: pgmap.getZoom()
+                }
+                console.log(lastView);
+            }
+        })
+
+        // pgmap.on('zoomend', function() {
+        //     if (currentID < 0) {
+        //         lastView = {
+        //                 center: pgmap.getCenter(),
+        //                 zoom: pgmap.getZoom()
+        //         }
+        //         console.log(lastView);
+        //     }
+        // })
+
 
         const numberWithCommas = (x) => {
             return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
         }
 
-
-        // const getTargetHTML = function (elem) {
-        //     const id = elem.getAttribute('data-show-id')
-        //     const target = document.querySelector(`[data-id="${id}"]`)
-        //     return target.outerHTML
-        // }
-
-        // document.querySelectorAll('[data-show-id]').forEach(function (elem) {
-        //     const html = getTargetHTML(elem)
-        //     elem.onclick = basicLightbox.create(html).show
-        // })
-
     </script>
-    <!-- <script src="src/basicLightbox.min.js"></script> -->
 </body>
 
 </html>
