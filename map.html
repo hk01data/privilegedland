@@ -40,38 +40,41 @@
 
 <body>
     <div id="attribution">香港01私人遊樂場地圖 | <a href="" data-toggle="modal" data-target="#attributionModal">製作團隊</a></div>
+
     <div id='mapid'></div>
+
     <!-- Modal -->
     <div class="modal fade" id="attributionModal" tabindex="-1" role="dialog" aria-labelledby="attributionModal" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                <h5 class="modal-title" id="attributionModal">香港01私人遊樂場地圖</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+                    <h5 class="modal-title" id="attributionModal">香港01私人遊樂場地圖</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
                 </div>
                 <div class="modal-body">
-                        <h5>資料來源</h5>
-                        <ul class="list-unstyled">
+                    <h5>資料來源</h5>
+                    <ul class="list-unstyled">
                         <li>XXXXXXXXXXXXX</li>
                         <li>XXXXXXXXXXXXX</li>
                     </ul>
-                        <h5>製作團隊</h5>
-                        <ul class="list-unstyled">
-                            <li>報道：陳信熙、邱靖汶</li>
-                            <li>地圖製作：梁逸風、林炳坤</li>
-                        </ul>
-                        
-                        <p class="font-weight-light"><a href="https://leafletjs.com/" target="_blank">Leaflet</a> |  &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a></p>
+                    <h5>製作團隊</h5>
+                    <ul class="list-unstyled">
+                        <li>報道：陳信熙、邱靖汶</li>
+                        <li>地圖製作：梁逸風、林炳坤</li>
+                    </ul>
+
+                    <p class="font-weight-light"><a href="https://leafletjs.com/" target="_blank">Leaflet</a> | &copy; <a
+                            href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a></p>
                 </div>
             </div>
-            </div>
         </div>
+    </div>
 
     <div class="card card--mobile card--hidden">
         <div class="card-header">
-                <span id="cardType"></span>
+            <span id="cardType"></span>
             <button type="button" class="card_control" id="close-card" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
             </button>
@@ -82,20 +85,19 @@
                 <span aria-hidden="true">＜</span>
             </button>
         </div>
-        
+
         <span class="card-title" id="cardName"></span>
-        
-            <div class="main-carousel"></div>
-            <p class="caption"></p>
-            <div class="card-body">   
+
+        <div class="main-carousel"></div>
+        <p class="caption"></p>
+        <div class="card-body">
             <div class="container">
                 <ul class="fa-ul" id="cardDetail"></ul>
                 <p class="remarks"></p>
             </div>
-        </div> 
-            <!-- <div id="infogram"> </div> -->
         </div>
         <div class="card-footer hide"><a id="article" href="" target="_blank"></a></div>
+        <!-- <div id="infogram"> </div> -->
     </div>
 
 
@@ -163,8 +165,8 @@
         function initMap(entryPoint, initialID) {
             console.log(entryPoint + " | initialID: " + initialID);
             var map_options = {
-                center: (matchMedia('screen and (max-width: 708px)').matches) ? [22.372809, 114.1660907] : [22.372809, 114.120322],
-                zoom: 11, 
+                center: (matchMedia('screen and (max-width: 708px)').matches) ? [22.372809, 114.1590907] : [22.372809, 114.145322],
+                zoom: (matchMedia('screen and (max-width: 708px)').matches) ? 10.5 : 11.5,
                 zoomSnap: 0,
                 zoomDelta: 1,
                 wheelPxPerZoomLevel: 40,
@@ -193,9 +195,9 @@
             };
 
             lastView = {
-                        center: pgmap.getCenter(),
-                        zoom: pgmap.getZoom()
-                };
+                center: pgmap.getCenter(),
+                zoom: pgmap.getZoom()
+            };
         }
 
 
@@ -203,29 +205,31 @@
         var card = document.querySelector('.card--mobile');
         var card_header = document.querySelector('.card-header');
         var card_title = document.querySelector('.card-title');
-        var card_footer = document.querySelector('.card-footer');
         var card_body = document.querySelector('.card-body');
+        var card_footer = document.querySelector('.card-footer');
 
         card_header.addEventListener('click', (event) => {
-            card.classList.toggle('card--expanded');
+            if (matchMedia('screen and (max-width: 708px)').matches)
+                card.classList.toggle('card--expanded');
             event.stopPropagation();
         });
 
         card_title.addEventListener('click', (event) => {
-            card.classList.toggle('card--expanded');
+            if (matchMedia('screen and (max-width: 708px)').matches)
+                card.classList.toggle('card--expanded');
             event.stopPropagation();
         });
 
         card_body.addEventListener('click', (event) => {
-            card.classList.toggle('card--expanded');
+            if (matchMedia('screen and (max-width: 708px)').matches)
+                card.classList.toggle('card--expanded');
             event.stopPropagation();
         });
 
         function restoreCard() {
             lastClickedLayerID = currentID;
             card_footer.classList.add("hide");
-            card_footer.classList.remove("show");
-            document.querySelector(".card--mobile").classList.add("full-height");
+            document.querySelector(".card--mobile").classList.add("no-footer");
             destroyFlkty();
             resetStyle(currentID);
         }
@@ -237,7 +241,7 @@
             restoreCard();
 
             currentID = 0;
-            
+
 
             pgmap.setView(lastView.center, lastView.zoom);
 
@@ -297,7 +301,7 @@
 
 
             layers[feature.properties.id].feature.properties.desktopBound =
-                [[bbox.getSouth(), bbox.getWest() - (bbox.getEast() - bbox.getWest())], [bbox.getNorth(), bbox.getEast()]];
+                [[bbox.getSouth(), bbox.getEast() - (bbox.getEast() - bbox.getWest()) * 2.5], [bbox.getNorth(), bbox.getEast()]];
 
 
             layer.on('click', function (e) {
@@ -319,32 +323,32 @@
                 return parseInt(element.properties.id) == int_ID;
             });
             // if (parseInt(element.properties.id) == int_ID) {
-                    switch (int_ID) {
-                        case 18:
-                            layers[18.1].setStyle(shape_red);
-                            layers[18.2].setStyle(shape_red);
-                            break;
-                        case 20:
-                            layers[20.1].setStyle(shape_red);
-                            layers[20.2].setStyle(shape_red);
-                            break;
+            switch (int_ID) {
+                case 18:
+                    layers[18.1].setStyle(shape_red);
+                    layers[18.2].setStyle(shape_red);
+                    break;
+                case 20:
+                    layers[20.1].setStyle(shape_red);
+                    layers[20.2].setStyle(shape_red);
+                    break;
 
-                        case 22:
-                            layers[22.1].setStyle(shape_red);
-                            layers[22.2].setStyle(shape_red);
-                            break;
-                        default:
-                            layers[int_ID].setStyle(shape_red);
-                    }
-                    resetStyle(lastClickedLayerID);
+                case 22:
+                    layers[22.1].setStyle(shape_red);
+                    layers[22.2].setStyle(shape_red);
+                    break;
+                default:
+                    layers[int_ID].setStyle(shape_red);
+            }
+            resetStyle(lastClickedLayerID);
 
-                    createPopup(elem);
-                    zoomToPolygon(id);
-                    
-                    var stateObj = { playground_id: currentID };
-                    window.history.pushState(stateObj, "", `#${entrySource}&id=${currentID}`);
-                    console.log("lastClickedLayerID: " + lastClickedLayerID + " | currentID: " + currentID);
-                // }
+            createPopup(elem);
+            zoomToPolygon(id);
+
+            var stateObj = { playground_id: currentID };
+            window.history.pushState(stateObj, "", `#${entrySource}&id=${currentID}`);
+            console.log("lastClickedLayerID: " + lastClickedLayerID + " | currentID: " + currentID);
+            // }
         }
 
         function resetStyle(id) {
@@ -387,7 +391,7 @@
             }
 
             var options = {
-                padding: [50, 50], 
+                padding: [50, 50],
                 animate: true,
                 duration: 0.5,
                 easeLinearity: 0.1
@@ -426,13 +430,13 @@
                 document.getElementById("article").textContent = prop["article_text"];
                 document.getElementById("article").setAttribute("href", prop["article"]);
                 card_footer.classList.remove("hide");
-                document.querySelector(".card--mobile").classList.remove("full-height");
+                document.querySelector(".card--mobile").classList.remove("no-footer");
             } else {
-                document.querySelector(".card--mobile").classList.add("full-height");
+                document.querySelector(".card--mobile").classList.add("no-footer");
             }
 
-            
-            
+
+
             // if (prop['infogram']) {
             //     document.getElementById("infogram").innerHTML = prop['infogram'];
             //     !function (e, t, n, s) { var i = "InfogramEmbeds", o = e.getElementsByTagName(t)[0], d = /^http:/.test(e.location) ? "http:" : "https:"; if (/^\/{2}/.test(s) && (s = d + s), window[i] && window[i].initialized) window[i].process && window[i].process(); else if (!e.getElementById(n)) { var a = e.createElement(t); a.async = 1, a.id = n, a.src = s, o.parentNode.insertBefore(a, o) } }(document, "script", "infogram-async", "https://e.infogram.com/js/dist/embed-loader-min.js");
@@ -490,7 +494,7 @@
             }
             flkty = new Flickity(flktyElem, options);
 
-            
+
 
             flkty.on('select', function () {
                 // set image caption using img's alt
@@ -500,7 +504,7 @@
                 credit.className = 'credit';
                 credit.textContent = imgs.images[flkty.selectedIndex].credit;
                 caption.appendChild(credit);
-                
+
                 var stateObj = { playground_id: currentID };
                 window.history.pushState(stateObj, "", `#${entrySource}&id=${currentID}&img=${flkty.selectedIndex}`);
             });
@@ -556,7 +560,7 @@
             })
         }
 
-        pgmap.on('zoomend', function() {
+        pgmap.on('zoomend', function () {
             if (pgmap.getZoom() < 13) {
                 pgmap.addLayer(searchMkr_layer);
             }
@@ -565,11 +569,11 @@
             }
         });
 
-        pgmap.on('mouseup', function() {
+        pgmap.on('mouseup', function () {
             if (currentID < 1) {
                 lastView = {
-                        center: pgmap.getCenter(),
-                        zoom: pgmap.getZoom()
+                    center: pgmap.getCenter(),
+                    zoom: pgmap.getZoom()
                 }
                 console.log(lastView);
             }
