@@ -72,26 +72,28 @@
     <div class="card card--mobile card--hidden">
         <div class="card-header">
                 <span id="cardType"></span>
-            <button type="button" class="close" id="close-card" data-dismiss="modal" aria-label="Close">
+            <button type="button" class="card_control" id="close-card" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
             </button>
-            <button type="button" class="close" id="nextBtn" data-dismiss="modal" aria-label="Close">
+            <button type="button" class="card_control" id="nextBtn" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">＞</span>
             </button>
-            <button type="button" class="close" id="prevBtn" data-dismiss="modal" aria-label="Close">
+            <button type="button" class="card_control" id="prevBtn" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">＜</span>
             </button>
         </div>
         
         <span class="card-title" id="cardName"></span>
-        <div class="card-body">
+        
             <div class="main-carousel"></div>
             <p class="caption"></p>
+            <div class="card-body">   
             <div class="container">
                 <ul class="fa-ul" id="cardDetail"></ul>
                 <p class="remarks"></p>
             </div>
-            <div id="infogram"> </div>
+        </div> 
+            <!-- <div id="infogram"> </div> -->
         </div>
         <div class="card-footer hide"><a id="article" href="" target="_blank"></a></div>
     </div>
@@ -167,8 +169,8 @@
                 zoomDelta: 1,
                 wheelPxPerZoomLevel: 40,
                 maxBounds: ([
-                    [21.795661, 113.073929],
-                    [23.113786, 115.230749]
+                    [22.114431, 113.795859],
+                    [22.594376, 114.454140]
                 ]),
                 keyboard: false // Prevent jumping in iframe
             }
@@ -202,6 +204,7 @@
         var card_header = document.querySelector('.card-header');
         var card_title = document.querySelector('.card-title');
         var card_footer = document.querySelector('.card-footer');
+        var card_body = document.querySelector('.card-body');
 
         card_header.addEventListener('click', (event) => {
             card.classList.toggle('card--expanded');
@@ -209,6 +212,11 @@
         });
 
         card_title.addEventListener('click', (event) => {
+            card.classList.toggle('card--expanded');
+            event.stopPropagation();
+        });
+
+        card_body.addEventListener('click', (event) => {
             card.classList.toggle('card--expanded');
             event.stopPropagation();
         });

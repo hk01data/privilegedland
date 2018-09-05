@@ -4,6 +4,7 @@ body {
     margin: 0;
     padding: 0;
     font-family: 'Noto Sans TC', sans-serif;
+    overflow: hidden;
 }
 
 * { box-sizing: border-box; }
@@ -47,8 +48,8 @@ body {
         height: calc(62.5% - 49px);
         left: 0;
         right: 0;
-        -webkit-transition: all .2s ease-in-out,top .2s ease-out; 
-        transition: all .2s ease-in-out,top .2s ease-out;
+        -webkit-transition: all .5s ease-in-out,top .5s ease-out; 
+        transition: all .5s ease-in-out,top .5s ease-out;
     }
 
     .full-height {
@@ -62,13 +63,14 @@ body {
 
     .card--expanded:not(.card--hidden).full-height {
         top: 0%;
+
         height: 100%;
     }
 
     .card--hidden {
         top: 100%;
-        -webkit-transition: all .2s ease-in-out,top .2s ease-out; 
-        transition: all .2s ease-in-out,top .2s ease-out;
+        -webkit-transition: all .5s ease-in-out,top .5s ease-out; 
+        transition: all .5s ease-in-out,top .5s ease-out;
     }
 
     .card-footer {
@@ -80,13 +82,6 @@ body {
         z-index: 5020;
     }
 
-    .card #cardName {
-        display: block;
-        margin: 0.6rem 0 0.6rem 1.25rem;
-        font-weight: 500;
-        font-size: 1.3rem
-
-    }
 }
 
 
@@ -98,16 +93,10 @@ body {
         height: calc(80% - 49px);
         top: 100px;
         left: 10px;
+        opacity: 1;
         -webkit-transition: visibility 0s 0.33s, opacity 0.33s linear;
         transition: visibility 0s 0.33s, opacity 0.33s linear;
         font-size: 90%;
-    }
-
-    .card #cardName {
-        display: block;
-        margin: 0.3rem 0 0.3rem 1.25rem;
-        font-weight: 500;
-        font-size: 1.2rem
     }
 
     .card--expanded:not(.card--hidden) {
@@ -116,6 +105,7 @@ body {
 
     .card--hidden {
         visibility: hidden;
+        opacity: 0;
         -webkit-transition: visibility 0s 0.33s, opacity 0.33s linear;
         transition: visibility 0s 0.33s, opacity 0.33s linear;
     }
@@ -137,6 +127,7 @@ body {
         height: calc(80% - 49px);
         top: 100px;
         left: 10px;
+        opacity: 1;
         -webkit-transition: visibility 0s 0.33s, opacity 0.33s linear;
         transition: visibility 0s 0.33s, opacity 0.33s linear;
         
@@ -148,6 +139,7 @@ body {
 
     .card--hidden {
         visibility: hidden;
+        opacity: 0;
         -webkit-transition: visibility 0s 0.33s, opacity 0.33s linear;
         transition: visibility 0s 0.33s, opacity 0.33s linear;
     }
@@ -159,13 +151,8 @@ body {
         z-index: 5020;
     }
 
-    .card #cardName {
-        display: block;
-        margin: 0.3rem 0 0.3rem 1.25rem;
-        font-weight: 500;
-        font-size: 1.2rem
-    }
 }
+
 
 
 
@@ -173,7 +160,11 @@ body {
     padding: 0.5rem 0 0.5rem 1.25rem;
 }
 
-.card .close {
+.card .card_control {
+    float: right;
+    padding: 0;
+    background-color: transparent;
+    border: 0;
     font-size: 1.8rem;
     font-weight: 700;
     line-height: 1;
@@ -185,6 +176,14 @@ body {
 
 .card #close-card {
     padding: 0 1rem 0 0rem; 
+}
+
+
+.card #cardName {
+    display: block;
+    margin: 0.6rem 0 0.6rem 1.25rem;
+    font-weight: 500;
+    font-size: 1.3rem
 }
 
 .card #nextBtn {
@@ -243,7 +242,9 @@ body {
     background: rgb(250, 133, 112);
 }
 
-
+.container {
+    margin-top:1rem;
+}
 
 .card .fas {
     margin-right: 1rem;
@@ -293,9 +294,7 @@ body {
     width: 100%;
 }
 
-.is-fullscreen {
-    
-}
+
 
 .flickity-prev-next-button {
     width: 30px !important;
