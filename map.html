@@ -32,13 +32,42 @@
     <script src="src/fullscreen.js"></script>
     <link rel="stylesheet" href="src/fullscreen.css" media="screen">
 
+    <script src="src/bootstrap-native-v4.min.js"></script>
+
 
 
 </head>
 
 <body>
+    <div id="attribution">香港01私人遊樂場地圖 | <a href="" data-toggle="modal" data-target="#attributionModal">製作團隊</a></div>
     <div id='mapid'></div>
-
+    <!-- Modal -->
+    <div class="modal fade" id="attributionModal" tabindex="-1" role="dialog" aria-labelledby="attributionModal" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h5 class="modal-title" id="attributionModal">香港01私人遊樂場地圖</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                </div>
+                <div class="modal-body">
+                        <h5>資料來源</h5>
+                        <ul class="list-unstyled">
+                        <li>XXXXXXXXXXXXX</li>
+                        <li>XXXXXXXXXXXXX</li>
+                    </ul>
+                        <h5>製作團隊</h5>
+                        <ul class="list-unstyled">
+                            <li>報道：陳信熙、邱靖汶</li>
+                            <li>地圖製作：梁逸風、林炳坤</li>
+                        </ul>
+                        
+                        <p class="font-weight-light"><a href="https://leafletjs.com/" target="_blank">Leaflet</a> |  &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a></p>
+                </div>
+            </div>
+            </div>
+        </div>
 
     <div class="card card--mobile card--hidden">
         <div class="card-header">
@@ -56,7 +85,6 @@
         
         <span class="card-title" id="cardName"></span>
         <div class="card-body">
-            
             <div class="main-carousel"></div>
             <p class="caption"></p>
             <div class="container">

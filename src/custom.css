@@ -319,3 +319,18 @@ body {
   .flickity-button:hover {
     background: #F90;
   }
+
+
+#attribution {
+    background: rgba(255, 255, 255, 0.7);
+    font-size: 0.9rem;
+    padding: 0rem 0.5rem 0rem;
+    position: absolute;
+    z-index: 1000;
+    bottom: 0;
+    left: 0;
+}
+
+.leaflet-control-attribution.leaflet-control {
+    display: none;
+}
