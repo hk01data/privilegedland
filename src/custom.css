@@ -163,10 +163,15 @@ body {
         background-color: rgb(248, 248, 248);
         border: none;
         z-index: 5020;
+        visibility: visible;
+        opacity: 1;
+        -webkit-transition: all .3s ease-in-out,top .3s ease-out; 
+        transition: all .3s ease-in-out,top .3s ease-out;        
     }
 
     .hide {
-        display: none;
+        visibility: hidden;
+        opacity: 0;
         -webkit-transition: all .3s ease-in-out,top .3s ease-out; 
         transition: all .3s ease-in-out,top .3s ease-out;
     }
@@ -349,9 +354,8 @@ body {
     z-index: 1000;
     bottom: 0;
     left: 0;
-    display: none;
 }
 
-/* .leaflet-control-attribution.leaflet-control {
+.leaflet-control-attribution.leaflet-control {
     display: none;
-} */
+}
