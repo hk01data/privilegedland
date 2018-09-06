@@ -13,7 +13,7 @@ var markers = {
         },
         "properties": {
           "id": 27,
-          "zoomlvl": 16
+          "zoomlvl": 0
         }
       },
       {
@@ -28,7 +28,7 @@ var markers = {
         },
         "properties": {
           "id": 16,
-          "zoomlvl": 15
+          "zoomlvl": 0
         }
       },
       {
@@ -81,29 +81,14 @@ var markers = {
         "geometry": {
           "type": "Point",
           "coordinates": [
-            114.193376,
-            22.258569,
+            114.186289,
+            22.275441, 
             0
           ]
         },
         "properties": {
           "id": 23,
-          "zoomlvl": 16
-        }
-      },
-      {
-        "type": "Feature",
-        "geometry": {
-          "type": "Point",
-          "coordinates": [
-            114.1816527,
-            22.2751327,
-            0
-          ]
-        },
-        "properties": {
-          "id": 20,
-          "zoomlvl": 16
+          "zoomlvl": 15
         }
       },
       {
@@ -164,21 +149,6 @@ var markers = {
         "properties": {
           "id": 2,
           "zoomlvl": 16
-        }
-      },
-      {
-        "type": "Feature",
-        "geometry": {
-          "type": "Point",
-          "coordinates": [
-            114.1900624,
-            22.2770167,
-            0
-          ]
-        },
-        "properties": {
-          "id": 23,
-          "zoomlvl": 17
         }
       },
       {
