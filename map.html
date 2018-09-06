@@ -88,10 +88,11 @@
 
         <span class="card-title" id="cardName"></span>
 
-        <div class="main-carousel"></div>
-        <p class="caption"></p>
+        
         <div class="card-body">
+            <div class="main-carousel"></div>
             <div class="container">
+                    <p class="caption"></p>
                 <ul class="fa-ul" id="cardDetail"></ul>
                 <p class="remarks"></p>
             </div>
@@ -205,7 +206,7 @@
         var card = document.querySelector('.card--mobile');
         var card_header = document.querySelector('.card-header');
         var card_title = document.querySelector('.card-title');
-        var card_body = document.querySelector('.card-body');
+        var card_container = document.querySelector('.container');
         var card_footer = document.querySelector('.card-footer');
 
         card_header.addEventListener('click', (event) => {
@@ -220,7 +221,7 @@
             event.stopPropagation();
         });
 
-        card_body.addEventListener('click', (event) => {
+        card_container.addEventListener('click', (event) => {
             if (matchMedia('screen and (max-width: 708px)').matches)
                 card.classList.toggle('card--expanded');
             event.stopPropagation();
