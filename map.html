@@ -39,7 +39,7 @@
 </head>
 
 <body>
-    <div id="attribution">香港01私人遊樂場地圖 | <a href="" data-toggle="modal" data-target="#attributionModal">製作團隊</a></div>
+    <!-- <div id="attribution">香港01私人遊樂場地圖 | <a href="" data-toggle="modal" data-target="#attributionModal">製作團隊</a></div> -->
 
     <div id='mapid'></div>
 
@@ -175,6 +175,7 @@
                     [22.114431, 113.795859],
                     [22.594376, 114.454140]
                 ]),
+                attributionControl: false,
                 keyboard: false // Prevent jumping in iframe
             }
 
@@ -182,9 +183,10 @@
 
             L.tileLayer('https://maptile.hk01.com/tile/{z}/{x}/{y}.png', {
                 maxZoom: 18,
-                minZoom: 10,
-                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                minZoom: 10
             }).addTo(pgmap);
+
+            L.control.attribution({prefix: '香港01私人遊樂場地圖 | <a href="" data-toggle="modal" data-target="#attributionModal">製作團隊</a>'}).addTo(pgmap) ;	
 
             playground_layer = L.geoJSON(playgrounds, {
                 onEachFeature: loopLayer,
@@ -594,7 +596,6 @@
         const numberWithCommas = (x) => {
             return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
         }
-
     </script>
 </body>
 
