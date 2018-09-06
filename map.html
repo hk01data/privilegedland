@@ -23,7 +23,7 @@
         crossorigin="anonymous">
 
 
-    <link rel="stylesheet" href="src/custom.css?20180903311">
+    <link rel="stylesheet" href="src/custom.css?2018090312321311">
     <script src="src/playgrounds.js"></script>
     <script src="src/pgContents.js"></script>
     <script src="src/markers.js"></script>
@@ -415,7 +415,7 @@
 
             document.getElementById("cardName").innerHTML = prop["chi_name"];
             var content = `
-                    <li><span class="fa-li"><i class="fas fa-expand-arrows-alt fa-fw"></i></span>面積：${(prop["area"] > 9999) ? numberWithCommas(Math.round(prop["area"] / 10000, 0)) + '公頃' : numberWithCommas(prop["area"]) + '呎'}</li>`
+                    <li><span class="fa-li"><i class="fas fa-expand-arrows-alt fa-fw"></i></span>面積：${(prop["area"] > 9999) ? numberWithCommas(Math.round(prop["area"] / 10000 * 10)/10) + '萬呎' : numberWithCommas(prop["area"]) + '呎'}</li>`
 
             content += `<li><span class="fa-li"><i class="fas fa-user-circle fa-fw"></i></span>會員：${numberWithCommas(prop["members"])}人</li>`;
 
