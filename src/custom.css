@@ -374,4 +374,5 @@ body {
 
 .modal {
     z-index: 5200 !important;
+    /* display: none; */
 }
